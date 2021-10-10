@@ -1,22 +1,19 @@
 [Graph_option]
+graph_type = small_world
 # number of vertices
 N = 50
-graph_type = small_world
+# number of edges
+E = 100
 
 [Graph_option/small_world_generator]
+# Number of neighbours connected
 k = 6
+# Probability of reconnection
 p = 0.05
 
-#integrand=fsincos
-integrand=parsedFunction
-udflib=./libudf.so
-#library='./libAdamsRules.so ./libGaussRules.so'
-library='./libMontecarloRules.so'
-rule=Montecarlo
-a=-1
-b=3
-nint=25
-#rule=Trapezoidal
-#rule=?
-targetError=1.e-5
-maxIter=100
+[Graph_option/R-MAT]
+# Those four parameters have to be probabilities and to sum up to 1
+a = 0.49
+b = 0.19
+c = 0.19
+d = 0.13

@@ -1,11 +1,12 @@
 #include <iostream>
 #include <filesystem>
+#include <random>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/random/linear_congruential.hpp>
 #include <boost/graph/graph_utility.hpp> // print_graph
+#include <boost/graph/adjacency_list_io.hpp>
 #include "GetPot"
-// #include "ruleFactory.hpp"
-#include "person.hpp"
+#include "Person.hpp"
+#include "PersonCreator.hpp"
 #include "GraphCreatorSmallWorld.hpp"
 #include "GraphCreatorRMAT.hpp"
 #include "GraphCreatorErdosRenyi.hpp"
@@ -20,17 +21,6 @@ void printHelp(){
 
 }
 
-/*
-//! Helper function
-template <class Factory>
-void printList(Factory const & rulesFactory)
-{
-  auto rules = rulesFactory.registered();
-  std::cout << "The following rules are registered" << std::endl;
-  for (auto i:rules)
-    std::cout << i << std::endl;
-}
-*/
 
 int main(int argc, char** argv)
 {
@@ -59,32 +49,39 @@ int main(int argc, char** argv)
     N = 100;
   }
 
-  boost::minstd_rand gen;
-  unsigned k = 6;
-  double p = 0.03;
-  unsigned E = 50;
-  double a{0.6};
-  double b{0.2};
-  double c{0.15};
-  double d{0.05};
+  unsigned int E = GPfile("Graph_option/E", 0);
+
+  unsigned k = GPfile("Graph_option/small_world_generator/k", 0);
+  double p = GPfile("Graph_option/small_world_generator/p", -1.);
+
+  double a = GPfile("Graph_option/R-MAT/a", -1.);
+  double b = GPfile("Graph_option/R-MAT/b", -1.);
+  double c = GPfile("Graph_option/R-MAT/c", -1.);
+  double d = GPfile("Graph_option/R-MAT/d", -1.);
+
   // Create graph with N nodes
 
-  GraphCreatorSmallWorld<boost::minstd_rand, boost::vecS, boost::vecS, boost::undirectedS,
-                              ElectionManipulation::Person> gc(gen, N, k, p);
+  std::random_device rd ;
+  std::knuth_b reng{rd()};
 
-  GraphCreatorRMAT<boost::minstd_rand, boost::vecS, boost::vecS, boost::undirectedS,
-                              ElectionManipulation::Person> gc1(gen, N, E, a, b, c, d);
+  GraphCreatorSmallWorld<std::knuth_b, boost::vecS, boost::vecS, boost::undirectedS,
+                              ElectionManipulation::Person> gc(reng, N, k, p);
 
-  GraphCreatorErdosRenyi<boost::minstd_rand, boost::vecS, boost::vecS, boost::undirectedS,
-                              ElectionManipulation::Person> gc2(gen, N, E);
+  GraphCreatorRMAT<std::knuth_b, boost::vecS, boost::vecS, boost::undirectedS,
+                              ElectionManipulation::Person> gc1(reng, N, E, a, b, c, d);
+
+  GraphCreatorErdosRenyi<std::knuth_b, boost::vecS, boost::vecS, boost::undirectedS,
+                              ElectionManipulation::Person> gc2(reng, N, E);
 
   Graph g{gc.create()};
   Graph h{gc1.create()};
   Graph i{gc2.create()};
 
-  print_graph(g, std::cout);
-  print_graph(h, std::cout);
-  print_graph(i, std::cout);
+//  print_graph(g, std::cout);
+//  print_graph(h, std::cout);
+//  print_graph(i, std::cout);
+//  std::cout << boost::write(i);
+
 
 
   return 0;

@@ -1,5 +1,5 @@
-#ifndef HH_GRAPHCREATORERDOSRENYI_HH
-#define HH_GRAPHCREATORERDOSRENYI_HH
+#ifndef GRAPHCREATORERDOSRENYI_HPP
+#define GRAPHCREATORERDOSRENYI_HPP
 
 #include "GraphCreatorBase.hpp"
 #include "GraphCreatorRMAT.hpp"
@@ -62,4 +62,4 @@ namespace election_manipulation::GraphCreator{
 } // end namespace election_manipulation::GraphCreator
 
 
-#endif // HH_GRAPHCREATORERDOSRENYI_HH
+#endif // GRAPHCREATORERDOSRENYI_HPP

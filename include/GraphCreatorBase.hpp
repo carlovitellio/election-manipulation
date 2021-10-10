@@ -1,5 +1,5 @@
-#ifndef HH_GRAPHCREATORBASE_HH
-#define HH_GRAPHCREATORBASE_HH
+#ifndef GRAPHCREATORBASE_HPP
+#define GRAPHCREATORBASE_HPP
 
 #include <boost/graph/adjacency_list.hpp>
 #include <memory>
@@ -44,4 +44,4 @@ namespace election_manipulation::GraphCreator{
 
 } // end namespace election_manipulation::GraphCreator
 
-#endif // HH_GRAPHCREATORBASE_HH
+#endif // GRAPHCREATORBASE_HPP
