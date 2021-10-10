@@ -14,22 +14,11 @@ namespace election_manipulation::GraphCreator{
   */
 
   template< class RandomGenerator,
-            class OutEdgeListS = boost::vecS, // a Sequence or an AssociativeContainer
-            class VertexListS = boost::vecS, // a Sequence or a RandomAccessContainer
-            class DirectedS = boost::undirectedS, // difference with the BGL since the default there is directed
-            class VertexProperty = boost::no_property,
-            class EdgeProperty = boost::no_property,
-            class GraphProperty = boost::no_property,
-            class EdgeListS = boost::listS>
-  class GraphCreatorErdosRenyi final: public GraphCreatorBase<RandomGenerator,
-                          OutEdgeListS, VertexListS, DirectedS, VertexProperty,
-                          EdgeProperty, GraphProperty, EdgeListS>
+            class Graph>
+  class GraphCreatorErdosRenyi final: public GraphCreatorBase<RandomGenerator, Graph>
   {
   public:
-    using GCBase = GraphCreatorBase<RandomGenerator, OutEdgeListS, VertexListS,
-              DirectedS, VertexProperty, EdgeProperty, GraphProperty, EdgeListS>;
-    using Graph = boost::adjacency_list<OutEdgeListS, VertexListS, DirectedS,
-                        VertexProperty, EdgeProperty, GraphProperty, EdgeListS>;
+    using GCBase = GraphCreatorBase<RandomGenerator, Graph>;
 
     GraphCreatorErdosRenyi(RandomGenerator& gen_, unsigned int N_, unsigned int E_):
                            gen{gen_}, N{N_}, E{E_}
@@ -43,8 +32,7 @@ namespace election_manipulation::GraphCreator{
 
     Graph create() override
     {
-      GraphCreatorRMAT<RandomGenerator, OutEdgeListS, VertexListS,
-                DirectedS, VertexProperty, EdgeProperty, GraphProperty, EdgeListS> gc(gen, N, E, 0.25, 0.25, 0.25, 0.25);
+      GraphCreatorRMAT<RandomGenerator, Graph> gc(gen, N, E, 0.25, 0.25, 0.25, 0.25);
 
       return gc.create();
     }

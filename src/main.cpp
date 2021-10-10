@@ -64,14 +64,9 @@ int main(int argc, char** argv)
   std::random_device rd ;
   std::knuth_b reng{rd()};
 
-  GraphCreatorSmallWorld<std::knuth_b, boost::vecS, boost::vecS, boost::undirectedS,
-                              ElectionManipulation::Person> gc(reng, N, k, p);
-
-  GraphCreatorRMAT<std::knuth_b, boost::vecS, boost::vecS, boost::undirectedS,
-                              ElectionManipulation::Person> gc1(reng, N, E, a, b, c, d);
-
-  GraphCreatorErdosRenyi<std::knuth_b, boost::vecS, boost::vecS, boost::undirectedS,
-                              ElectionManipulation::Person> gc2(reng, N, E);
+  GraphCreatorSmallWorld<std::knuth_b, Graph> gc(reng, N, k, p);
+  GraphCreatorRMAT<std::knuth_b, Graph> gc1(reng, N, E, a, b, c, d);
+  GraphCreatorErdosRenyi<std::knuth_b, Graph> gc2(reng, N, E);
 
   Graph g{gc.create()};
   Graph h{gc1.create()};

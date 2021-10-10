@@ -13,22 +13,11 @@ namespace election_manipulation::GraphCreator{
   */
 
   template< class RandomGenerator,
-            class OutEdgeListS = boost::vecS, // a Sequence or an AssociativeContainer
-            class VertexListS = boost::vecS, // a Sequence or a RandomAccessContainer
-            class DirectedS = boost::undirectedS, // difference with the BGL since the default there is directed
-            class VertexProperty = boost::no_property,
-            class EdgeProperty = boost::no_property,
-            class GraphProperty = boost::no_property,
-            class EdgeListS = boost::listS>
-  class GraphCreatorSmallWorld final: public GraphCreatorBase<RandomGenerator,
-                          OutEdgeListS, VertexListS, DirectedS, VertexProperty,
-                          EdgeProperty, GraphProperty, EdgeListS>
+            class Graph>
+  class GraphCreatorSmallWorld final: public GraphCreatorBase<RandomGenerator, Graph>
   {
   public:
-    using GCBase = GraphCreatorBase<RandomGenerator, OutEdgeListS, VertexListS,
-              DirectedS, VertexProperty, EdgeProperty, GraphProperty, EdgeListS>;
-    using Graph = boost::adjacency_list<OutEdgeListS, VertexListS, DirectedS,
-                        VertexProperty, EdgeProperty, GraphProperty, EdgeListS>;
+    using GCBase = GraphCreatorBase<RandomGenerator, Graph>;
 
     GraphCreatorSmallWorld(RandomGenerator& gen_, unsigned int N_,
                            unsigned int k_, double p_):

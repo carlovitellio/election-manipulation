@@ -15,22 +15,11 @@ namespace election_manipulation::GraphCreator{
   */
 
   template< class RandomGenerator,
-            class OutEdgeListS = boost::vecS, // a Sequence or an AssociativeContainer
-            class VertexListS = boost::vecS, // a Sequence or a RandomAccessContainer
-            class DirectedS = boost::undirectedS, // difference with the BGL since the default there is directed
-            class VertexProperty = boost::no_property,
-            class EdgeProperty = boost::no_property,
-            class GraphProperty = boost::no_property,
-            class EdgeListS = boost::listS>
-  class GraphCreatorRMAT final: public GraphCreatorBase<RandomGenerator,
-                          OutEdgeListS, VertexListS, DirectedS, VertexProperty,
-                          EdgeProperty, GraphProperty, EdgeListS>
+            class Graph>
+  class GraphCreatorRMAT final: public GraphCreatorBase<RandomGenerator, Graph>
   {
   public:
-    using GCBase = GraphCreatorBase<RandomGenerator, OutEdgeListS, VertexListS,
-              DirectedS, VertexProperty, EdgeProperty, GraphProperty, EdgeListS>;
-    using Graph = boost::adjacency_list<OutEdgeListS, VertexListS, DirectedS,
-                        VertexProperty, EdgeProperty, GraphProperty, EdgeListS>;
+    using GCBase = GraphCreatorBase<RandomGenerator, Graph>;
 
     GraphCreatorRMAT(RandomGenerator& gen_, unsigned int N_, unsigned int E_,
                      double a_, double b_, double c_, double d_):
@@ -45,8 +34,8 @@ namespace election_manipulation::GraphCreator{
                   << "a+b+c+d = " << a+b+c+d << std::endl;
         std::exit(1);
       }
-
-      if(!DirectedS::is_directed && (b!=c))
+      typedef typename Graph::directed_category Cat;
+      if(boost::detail::is_directed(Cat()) && (b!=c))
       {
         std::cerr << "Wrong input parameters for a G-MAT graph" << std::endl
                   << "b,c should be equal in undirected graphs" << std::endl;
