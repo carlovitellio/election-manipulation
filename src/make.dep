@@ -1,7 +1,0 @@
-main.o: main.cpp /home/carlo/election-manipulation/include/GetPot \
- /home/carlo/election-manipulation/include/person.hpp \
- /home/carlo/election-manipulation/include/GraphCreatorSmallWorld.hpp \
- /home/carlo/election-manipulation/include/GraphCreatorBase.hpp \
- /home/carlo/election-manipulation/include/GraphCreatorRMAT.hpp \
- /home/carlo/election-manipulation/include/GraphCreatorErdosRenyi.hpp \
- /home/carlo/election-manipulation/include/GraphCreatorRMAT.hpp
