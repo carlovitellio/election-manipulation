@@ -7,7 +7,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/rmat_graph_generator.hpp>
 
-namespace election_manipulation::GraphCreator{
+namespace ElectionManipulation::GraphCreator{
 
   //! Makes available the RMAT graph generator provided by BGL
   /*!
@@ -71,7 +71,7 @@ namespace election_manipulation::GraphCreator{
 
   };
 
-} // end namespace election_manipulation::GraphCreator
+} // end namespace ElectionManipulation::GraphCreator
 
 
 #endif // GRAPHCREATORSRMAT_HPP

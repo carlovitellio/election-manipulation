@@ -5,7 +5,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/small_world_generator.hpp>
 
-namespace election_manipulation::GraphCreator{
+namespace ElectionManipulation::GraphCreator{
 
   //! Makes available the Small World graph generator provided by BGL
   /*!
@@ -26,6 +26,7 @@ namespace election_manipulation::GraphCreator{
 
     std::unique_ptr<GCBase> clone() const override
     {
+      // return std::unique_ptr<GCBase>(*this);
       return std::unique_ptr<GCBase>(new GraphCreatorSmallWorld(*this));
     }
 
@@ -49,7 +50,7 @@ namespace election_manipulation::GraphCreator{
 
   };
 
-} // end namespace election_manipulation::GraphCreator
+} // end namespace ElectionManipulation::GraphCreator
 
 
 #endif // GRAPHCREATORSMALLWORLD_HPP

@@ -21,7 +21,7 @@ namespace ElectionManipulation{
 
     friend std::ostream & operator << (std::ostream &, Person const &);
 
-     template<class RandomEngine, class DistributionResistance,
+     template<class RandomGenerator, class DistributionResistance,
               class DistributionProbability> friend class PersonCreator;
   };
 

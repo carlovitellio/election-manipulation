@@ -6,7 +6,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/rmat_graph_generator.hpp>
 
-namespace election_manipulation::GraphCreator{
+namespace ElectionManipulation::GraphCreator{
 
   //! Makes available the Erdos Rényi graph generator using the R-MAT generator
   /*!
@@ -47,7 +47,7 @@ namespace election_manipulation::GraphCreator{
 
   };
 
-} // end namespace election_manipulation::GraphCreator
+} // end namespace ElectionManipulation::GraphCreator
 
 
 #endif // GRAPHCREATORERDOSRENYI_HPP

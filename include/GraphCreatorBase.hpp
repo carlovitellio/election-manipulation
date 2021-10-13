@@ -6,7 +6,7 @@
 #include <functional>
 #include <string>
 
-namespace election_manipulation::GraphCreator{
+namespace ElectionManipulation::GraphCreator{
 
   //! The basis class for all graph creators
   template< class RandomGenerator,
@@ -23,7 +23,7 @@ namespace election_manipulation::GraphCreator{
       and assignment operators for classes that aggregate object of the
       GraphCreator hierarchy by composition.
     */
-    virtual std::unique_ptr<GCBase> clone() const =0;
+    virtual std::unique_ptr<GCBase> clone() const=0;
 
 
     virtual Graph create()=0;
@@ -33,6 +33,6 @@ namespace election_manipulation::GraphCreator{
     virtual std::string name() const=0;
   };
 
-} // end namespace election_manipulation::GraphCreator
+} // end namespace ElectionManipulation::GraphCreator
 
 #endif // GRAPHCREATORBASE_HPP

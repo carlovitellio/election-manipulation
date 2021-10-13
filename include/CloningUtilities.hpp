@@ -62,7 +62,7 @@ namespace apsc
   } // end namespace TypeTraits
 
  /*! A smart pointer that handles cloning for compusing with polymorphic objects
-  
+
  This class implements a generic wrapper around a unique pointer
  useful to support the bridge pattern. Its role is to ease the memory
  management of object which are composed polymorphycally in a class
@@ -148,7 +148,7 @@ namespace apsc
  The interesting bit is that by use of implicit conversion and
  overloading of the dereferencing operators * and -> makes the use
  of the wrapper transparent!.
- 
+
  In the previous example the situation would change in
 
  \code
