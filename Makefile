@@ -1,16 +1,20 @@
+
 -include Makefile.inc
 
+SRC_DIR = src
+INC_DIR = include
+
 # get all files *.cpp
-SRCS=$(wildcard *.cpp)
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 # get the corresponding object file
 OBJS = $(SRCS:.cpp=.o)
 # get all headers in the working directory
-HEADERS=$(wildcard *.hpp)
+HEADERS = $(wildcard $(INC_DIR)/*.hpp)
 #
-exe_sources=$(filter main%.cpp,$(SRCS))
-EXEC=$(exe_sources:.cpp=)
+exe_sources = $(SRC_DIR)/main.cpp
+EXEC = $(exe_sources:.cpp=)
 
-#========================== DEFINITION OF THE TARGETS
+#========================== NEW THE DEFINITION OF THE TARGETS
 .phony= all clean distclean doc
 
 .DEFAULT_GOAL = all
@@ -22,7 +26,8 @@ clean:
 
 distclean:
 	$(MAKE) clean
-	$(RM) -f ./doc $(DEPEND)
+	$(RM) -f $(DEPEND)
+	$(RM) -r ./doc
 	$(RM) *.out *.bak *~
 
 doc:

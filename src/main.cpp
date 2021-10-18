@@ -13,6 +13,7 @@
 #include "GraphCreatorRMAT.hpp"
 #include "GraphCreatorErdosRenyi.hpp"
 #include "SocialNetworkCreator.hpp"
+#include "ManipulatorInfluence.hpp"
 
 using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                             ElectionManipulation::Person>;
@@ -51,7 +52,7 @@ int main(int argc, char** argv)
     N = 100;
   }
 
-  unsigned int E = GPfile("Graph_option/E", 0);
+  unsigned E = GPfile("Graph_option/E", 0);
 
   unsigned k = GPfile("Graph_option/small_world_generator/k", 0);
   double p = GPfile("Graph_option/small_world_generator/p", -1.);
@@ -93,8 +94,15 @@ int main(int argc, char** argv)
 
   Graph my_graph{snc.apply()};
 
-  std::cout << boost::write(my_graph);
-  print_graph(my_graph, std::cout);
+//  std::cout << boost::write(my_graph);
+//  print_graph(my_graph, std::cout);
+
+  unsigned steps = GPfile("InfluenceOption/Estimation/steps", 1);
+
+  ManipulatorInfluence mi(my_graph, steps);
+
+  mi.influence();
+
 
   return 0;
 

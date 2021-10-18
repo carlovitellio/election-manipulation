@@ -18,6 +18,9 @@ namespace ElectionManipulation{
       p.resistance = (unsigned) dis_res(engine);
       p.prob_voting_c0 = (double) dis_prob(engine);
       p.name = name;
+      unsigned int seed = engine();
+      p.engine = std::default_random_engine(seed);
+      p.update_marginal_utility();
     }
 
   private:

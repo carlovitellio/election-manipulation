@@ -11,12 +11,14 @@ namespace ElectionManipulation{
   class SocialNetworkCreator{
   public:
 
-    SocialNetworkCreator(const GraphCreatorBase & gc, const PersonCreator & pc, bool rename_=false):
+    SocialNetworkCreator(const GraphCreatorBase & gc, const PersonCreator & pc,
+                         bool rename_=false):
         graph_creator{gc}, person_creator{pc}, rename{rename_} {}
 
-    SocialNetworkCreator(GraphCreatorBase && gc, PersonCreator && pc):
+    SocialNetworkCreator(GraphCreatorBase && gc, PersonCreator && pc,
+                         bool rename_=false):
         graph_creator{std::forward<GraphCreatorBase>(gc)},
-        person_creator{std::forward<PersonCreator>(pc)} {}
+        person_creator{std::forward<PersonCreator>(pc)}, rename{rename_} {}
 
     Graph apply()
     {
