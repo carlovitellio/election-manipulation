@@ -14,12 +14,12 @@ namespace ElectionManipulation{
     Graph& my_graph;
     //! Only vertices at distance lower or equal to this parameter
     //! will be considered for computing the utility of each vertex
-    unsigned steps;
+    std::size_t steps;
 
   public:
     using Vertex = typename Graph::vertex_descriptor;
 
-    ManipulatorInfluence(Graph& my_graph_, unsigned steps_):
+    ManipulatorInfluence(Graph& my_graph_, std::size_t steps_):
               my_graph{my_graph_}, steps{steps_} {}
 
     /*!
@@ -49,11 +49,15 @@ namespace ElectionManipulation{
 
   };
 
+  // This template alias will be used in the following methods
+  template<typename Graph>
+  using Vertex = typename Graph::vertex_descriptor;
+
+
   template<class Graph>
   void ManipulatorInfluence<Graph>::compute_utility(typename Graph::vertex_descriptor seed)
   {
-    using Vertex = typename Graph::vertex_descriptor;
-    using MyQueue = std::queue<std::pair<Vertex, unsigned>>;
+    using MyQueue = std::queue<std::pair<Vertex, std::size_t>>;
 
     std::unordered_set<Vertex> visited;
     visited.emplace(seed);
@@ -73,7 +77,7 @@ namespace ElectionManipulation{
 
       for (auto out : boost::make_iterator_range(out_edges(u, my_graph)))
       {
-        auto v = target(out, my_graph);
+        Vertex v = target(out, my_graph);
 
         if(visited.find(v) != visited.end())
         {
@@ -96,8 +100,6 @@ namespace ElectionManipulation{
   template<class Graph>
   typename Graph::vertex_descriptor ManipulatorInfluence<Graph>::max_utility_vertex()
   {
-    using Vertex = typename Graph::vertex_descriptor;
-
     double max_utility{-1.};
     Vertex best_vertex;
 
@@ -118,8 +120,6 @@ namespace ElectionManipulation{
   template<class Graph>
   void ManipulatorInfluence<Graph>::influence()
   {
-    using Vertex = typename Graph::vertex_descriptor;
-
     Vertex seed = max_utility_vertex();
     my_graph[seed].update_prob();
     update_estimated_prob(seed, true);
@@ -132,12 +132,12 @@ namespace ElectionManipulation{
 
     while(!vertex_queue.empty())
     {
-      auto u = vertex_queue.front();
+      Vertex u = vertex_queue.front();
       vertex_queue.pop();
 
       for (auto out : boost::make_iterator_range(out_edges(u, my_graph)))
       {
-        auto v = target(out, my_graph);
+        Vertex v = target(out, my_graph);
 
         if(visited.find(v) != visited.end())
         {

@@ -11,11 +11,16 @@ namespace ElectionManipulation{
     return str;
   }
 
+  //! The Person casts a ballot according to her probability of voting
+  bool Person::cast_a_ballot()
+  {
+    std::bernoulli_distribution d(prob_voting_c0);
+    return d(engine);
+  }
+
   bool Person::receive_message()
   {
-    // It should be reinstatiated since the probability changes during time
-    std::bernoulli_distribution d(prob_voting_c0);
-    bool accepted = d(engine);
+    bool accepted = cast_a_ballot();
 
     if(accepted) update_prob();
 
@@ -25,12 +30,6 @@ namespace ElectionManipulation{
 
   void Person::update_prob()
   {
-    /*! The Person's probability of voting the candidate c0 increases
-        according to the following rule
-        \f[
-            p_{t+1} = \dfrac{p_t * w +1}{w+1}
-        \f]
-    */
     prob_voting_c0 = (prob_voting_c0 * resistance + 1)/(resistance + 1);
     resistance++;
     update_marginal_utility();
@@ -39,12 +38,6 @@ namespace ElectionManipulation{
 
   void Person::update_marginal_utility()
   {
-    /*! The manipulator marginal utility is determined by the possible
-        shift in probability obtained if the Person accepts her message
-        \f[
-            p_{t+1} - p_t = \dfrac{1 - p_t}{w+1}
-        \f]
-    */
     manipulator_marginal_utility = (1 - prob_voting_c0)/(resistance + 1);
   }
 

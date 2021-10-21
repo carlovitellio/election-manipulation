@@ -19,7 +19,7 @@ namespace ElectionManipulation{
 
   public:
     // Accessible also to the manipulator
-    unsigned int resistance;    //!< The resistance in changing the probability of voting
+    std::size_t resistance;    //!< The resistance in changing the probability of voting
     double manipulator_estim_prob{0.5};
     double manipulator_prob_activ;
     double manipulator_utility;
@@ -32,6 +32,12 @@ namespace ElectionManipulation{
     template<class RandomGenerator, class DistributionResistance,
              class DistributionProbability> friend class PersonCreator;
 
+    template<class Graph> friend class PerformanceEvaluator;
+
+
+    //! The Person casts a ballot according to her probability of voting
+    bool cast_a_ballot();
+
     //! The Person receives a message and decides whether accepting it or not
     bool receive_message();
 
@@ -39,7 +45,7 @@ namespace ElectionManipulation{
     /*! In particular, her probability of voting the candidate c0 increases
         according to the following rule
         \f[
-            p_{t+1} = \dfrac{p_t * w +1}{w+1}
+            p_{t+1} = \frac{p_t * w +1}{w+1}
         \f]
     */
     void update_prob();
@@ -48,7 +54,7 @@ namespace ElectionManipulation{
     /*! The manipulator marginal utility is determined by the possible
         shift in probability obtained if the Person accepts her message
         \f[
-            p_{t+1} - p_t = \dfrac{1 - p_t}{w+1}
+            p_{t+1} - p_t = \frac{1 - p_t}{w+1}
         \f]
     */
     void update_marginal_utility();

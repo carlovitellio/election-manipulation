@@ -5,6 +5,7 @@
 #include <memory>
 #include <functional>
 #include <string>
+#include "GetPot"
 
 namespace ElectionManipulation::GraphCreator{
 
@@ -25,12 +26,16 @@ namespace ElectionManipulation::GraphCreator{
     */
     virtual std::unique_ptr<GCBase> clone() const=0;
 
-
-    virtual Graph create()=0;
     virtual ~GraphCreatorBase()=default;
 
     //! a string that identify the general type of Graph Creator
     virtual std::string name() const=0;
+
+    virtual void set_gen(const RandomGenerator&)=0;
+
+    virtual void read_params(GetPot)=0;
+
+    virtual Graph create()=0;
   };
 
 } // end namespace ElectionManipulation::GraphCreator

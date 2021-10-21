@@ -1,13 +1,13 @@
 [Graph_option]
-graph_type = small_world
+graph_type = Small-World
 # number of vertices
-N = 50
+N = 200
 # number of edges
-E = 100
+E = 500
 
 [Graph_option/small_world_generator]
 # Number of neighbours connected
-k = 6
+k = 4
 # Probability of reconnection
 p = 0.05
 
@@ -19,8 +19,14 @@ c = 0.19
 d = 0.13
 
 [Person_option/Resistance/poisson]
-lambda = 5
+lambda = 50
 
 [Person_option/ProbabilityVoting/beta]
 alpha = 1
 beta = 1
+
+[InfluenceOption]
+rounds = 10
+
+[InfluenceOption/Estimation]
+steps = 3

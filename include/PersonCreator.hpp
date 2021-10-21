@@ -15,10 +15,10 @@ namespace ElectionManipulation{
 
     void apply(Person& p)
     {
-      p.resistance = (unsigned) dis_res(engine);
+      p.resistance = (std::size_t) dis_res(engine);
       p.prob_voting_c0 = (double) dis_prob(engine);
       p.name = name;
-      unsigned int seed = engine();
+      std::size_t seed = engine();
       p.engine = std::default_random_engine(seed);
       p.update_marginal_utility();
     }

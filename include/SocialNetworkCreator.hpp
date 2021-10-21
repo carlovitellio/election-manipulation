@@ -3,7 +3,7 @@
 
 #include "PersonCreator.hpp"
 #include "GraphCreatorBase.hpp"
-#include "CloningUtilities.hpp"
+#include "Utilities/CloningUtilities.hpp"
 
 namespace ElectionManipulation{
 
