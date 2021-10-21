@@ -67,18 +67,11 @@ export CXX
 
 export DOXYFILE=$(ROOT)/Doxyfile
 
-#export INC_DIR=$(ROOT)/include
-#includes := $(foreach inc,$(INC_DIR),-I$(inc) )
-
-# Mark the Boost directory as a system directory,
-# so that it gets the same special treatment as
-# is applied to the standard system directories
-# In particular, the -Wsuggest-override directive
-# won't raise any warning
+# Where the Boost library resides
 mkBoostInc?=/usr/include/boost/
 BOOST_DIR=$(mkBoostInc)
 
-INCLS  = -I. -I./include $(includes) -isystem $(BOOST_DIR)
+INCLS  = -I. -I./include -I$(BOOST_DIR)
 
 #
 # Set make macros

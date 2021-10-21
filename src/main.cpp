@@ -2,10 +2,15 @@
 #include <sstream>
 #include <filesystem>
 #include <random>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
 #include <boost/random/beta_distribution.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp> // print_graph
 #include <boost/graph/adjacency_list_io.hpp>
+#pragma GCC diagnostic pop
+
 #include "GetPot"
 #include "ElectionManipulationTraits.hpp"
 #include "Person.hpp"
@@ -131,7 +136,8 @@ int main(int argc, char** argv)
 
   std::ostringstream tmp;
 
-  tmp << "out/Ex_N" << N << "_E" << E << "_rounds" << rounds << ".dat";
+  tmp << "out/Ex_N" << num_vertices(my_graph)
+      << "_E" << num_edges(my_graph) << "_rounds" << rounds << ".dat";
   std::ofstream file (tmp.str());
 
   file << 0 << " " << pe.error_estimation_prob(2) << '\n';
