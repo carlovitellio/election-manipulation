@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 
   SocialNetworkCreator<
                       GraphCreator::GraphCreatorBase,
-                      PersonCreator<DistributionResistance, DistributionProbability>
+                      PersonCreator
                       > snc(*gc_ptr, pc);
 
   Graph my_graph{snc.apply()};

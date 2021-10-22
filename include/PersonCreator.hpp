@@ -6,10 +6,11 @@
 
 namespace ElectionManipulation{
 
-  template<class DistributionResistance, class DistributionProbability>
   class PersonCreator{
   public:
     using RandomGenerator = EMTraits::RandomGenerator;
+    using DistributionResistance = EMTraits::DistributionResistance;
+    using DistributionProbability = EMTraits::DistributionProbability;
 
     PersonCreator(RandomGenerator re, DistributionResistance dr, DistributionProbability dp,
                   std::string name_ = ""):
