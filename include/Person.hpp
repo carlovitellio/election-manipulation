@@ -10,6 +10,7 @@ namespace ElectionManipulation{
 
   */
   class Person{
+  public:
     using DefRandEngine=std::default_random_engine;
 
   private:
@@ -29,10 +30,10 @@ namespace ElectionManipulation{
 
     friend std::ostream & operator << (std::ostream &, Person const &);
 
-    template<class RandomGenerator, class DistributionResistance,
+    template<class DistributionResistance,
              class DistributionProbability> friend class PersonCreator;
 
-    template<class Graph> friend class PerformanceEvaluator;
+    friend class PerformanceEvaluator;
 
 
     //! The Person casts a ballot according to her probability of voting

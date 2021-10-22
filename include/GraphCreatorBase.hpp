@@ -1,22 +1,21 @@
 #ifndef GRAPHCREATORBASE_HPP
 #define GRAPHCREATORBASE_HPP
 
+#include "EMTraits.hpp"
 #include <boost/graph/adjacency_list.hpp>
 #include <memory>
 #include <functional>
 #include <string>
-#include "GetPot"
+#include "Utilities/GetPot"
 
 namespace ElectionManipulation::GraphCreator{
 
   //! The basis class for all graph creators
-  template< class RandomGenerator,
-            class Graph>
   class GraphCreatorBase
   {
   public:
-
-    using GCBase = GraphCreatorBase<RandomGenerator, Graph>;
+    using Graph = EMTraits::Graph;
+    using RandomGenerator = EMTraits::RandomGenerator;
 
     //! The class is clonable.
     /*!
@@ -24,7 +23,7 @@ namespace ElectionManipulation::GraphCreator{
       and assignment operators for classes that aggregate object of the
       GraphCreator hierarchy by composition.
     */
-    virtual std::unique_ptr<GCBase> clone() const=0;
+    virtual std::unique_ptr<GraphCreatorBase> clone() const=0;
 
     virtual ~GraphCreatorBase()=default;
 

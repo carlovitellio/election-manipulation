@@ -1,32 +1,29 @@
 #include <iostream>
 #include <sstream>
 #include <filesystem>
-#include <random>
+#include "Utilities/GetPot"
+//#include <random>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsuggest-override"
-#include <boost/random/beta_distribution.hpp>
-#include <boost/graph/adjacency_list.hpp>
+//#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp> // print_graph
 #include <boost/graph/adjacency_list_io.hpp>
 #pragma GCC diagnostic pop
 
-#include "GetPot"
-#include "ElectionManipulationTraits.hpp"
-#include "Person.hpp"
+#include "EMUtilities.hpp"
+#include "EMTraits.hpp"
+#include "GraphCreatorFactory.hpp"
 #include "PersonCreator.hpp"
-#include "GraphCreatorBase.hpp"
 #include "SocialNetworkCreator.hpp"
 #include "ManipulatorInfluence.hpp"
 #include "PerformanceEvaluator.hpp"
-#include "Utilities/Factory.hpp"
-#include "LoadFactory.hpp"
+//#include "Utilities/Factory.hpp"
+// #include "LoadFactory.hpp"
 
 
 static_assert(std::is_default_constructible_v<ElectionManipulation::Person>,
                   "The Boost Graph Library requires default-constructible vertex properties");
-using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-                            ElectionManipulation::Person>;
 
 
 void printHelp(){
@@ -37,6 +34,7 @@ void printHelp(){
 int main(int argc, char** argv)
 {
   using namespace ElectionManipulation;
+  using namespace ElectionManipulation::EMTraits;
 
   GetPot cl(argc,argv);
   if (cl.search(2, "--help", "-h")){
@@ -59,12 +57,10 @@ int main(int argc, char** argv)
 
 
   //! Instantiating the Factory collecting the graph creator methods
-  using GCBase = EMTraits<Graph>::GCBase;
-  using GraphFactory = EMTraits<Graph>::GraphFactory;
-  using GCHandler = EMTraits<Graph>::GCHandler; // alias to a apsc::PointerWrapper<GCBase>
+  using GCHandler = GraphCreator::GCHandler; // alias to a apsc::PointerWrapper<GCBase>
+  using GraphFactory = GraphCreator::GraphCreatorFactory;
 
-  GraphFactory & MyFactory = GraphFactory::Factory::Instance();
-  loadFactory<Graph>();
+  const GraphFactory & MyFactory = GraphCreator::MyFactory;
 
   if (cl.search(2, "--list", "-l"))
   {
@@ -85,20 +81,17 @@ int main(int argc, char** argv)
   std::random_device rd ;
   RandomGenerator reng{rd()};
 
-  bool found{true};
   GCHandler gc_ptr;
 
   try {
     gc_ptr = MyFactory.create(GCmethod);
     gc_ptr->set_gen(reng);
     gc_ptr->read_params(GPfile);
-  }  catch (std::invalid_argument &) {
-    found = false;
+    std::clog << "Implementing the graph with " << GCmethod << " creator" << std::endl;
   }
-
-  if (!found)
+  catch (std::invalid_argument & e)
   {
-    std::cout << "Graph creator method " << GCmethod << " does not exist" << std::endl;
+    std::cout << e.what() << std::endl;
     std::cout << "Registered methods are " << std::endl;
     printRegistered(MyFactory);
     return 2;
@@ -116,10 +109,10 @@ int main(int argc, char** argv)
 
   PersonCreator pc(reng, distribution, distrib2);
 
-  SocialNetworkCreator<Graph,
-  GCBase,
-  PersonCreator<RandomGenerator, DistributionResistance, DistributionProbability>
-  > snc(*gc_ptr, pc);
+  SocialNetworkCreator<
+                      GraphCreator::GraphCreatorBase,
+                      PersonCreator<DistributionResistance, DistributionProbability>
+                      > snc(*gc_ptr, pc);
 
   Graph my_graph{snc.apply()};
 

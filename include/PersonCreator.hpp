@@ -1,14 +1,16 @@
 #ifndef PERSONCREATOR_HPP
 #define PERSONCREATOR_HPP
 
+#include "EMTraits.hpp"
 #include "Person.hpp"
 
 namespace ElectionManipulation{
 
-  template<class RandomGenerator, class DistributionResistance, class DistributionProbability>
+  template<class DistributionResistance, class DistributionProbability>
   class PersonCreator{
-
   public:
+    using RandomGenerator = EMTraits::RandomGenerator;
+
     PersonCreator(RandomGenerator re, DistributionResistance dr, DistributionProbability dp,
                   std::string name_ = ""):
       engine{re}, dis_res{dr}, dis_prob{dp}, name{name_} {}
