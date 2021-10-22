@@ -33,7 +33,7 @@ namespace ElectionManipulation{
 
   } // end namespace ElectionManipulation::GraphCreator
 
-
+  
 } // end namespace ElectionManipulation
 
 

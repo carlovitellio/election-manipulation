@@ -109,10 +109,7 @@ int main(int argc, char** argv)
 
   PersonCreator pc(reng, distribution, distrib2);
 
-  SocialNetworkCreator<
-                      GraphCreator::GraphCreatorBase,
-                      PersonCreator
-                      > snc(*gc_ptr, pc);
+  SocialNetworkCreator snc(*gc_ptr, pc);
 
   Graph my_graph{snc.apply()};
 
@@ -129,7 +126,7 @@ int main(int argc, char** argv)
 
   std::ostringstream tmp;
 
-  tmp << "out/Ex_N" << num_vertices(my_graph)
+  tmp << "out/" << GCmethod << "_N" << num_vertices(my_graph)
       << "_E" << num_edges(my_graph) << "_rounds" << rounds << ".dat";
   std::ofstream file (tmp.str());
 

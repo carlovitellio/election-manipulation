@@ -2,24 +2,23 @@
 #define SOCIALNETWORKCREATOR_HPP
 
 #include "EMTraits.hpp"
-//#include "PersonCreator.hpp"
-//#include "GraphCreatorBase.hpp"
+#include "PersonCreator.hpp"
 #include "Utilities/CloningUtilities.hpp"
 
 namespace ElectionManipulation{
 
-  template<class GraphCreator, class PersonCreator>
   class SocialNetworkCreator{
   public:
     using Graph = EMTraits::Graph;
+    using GraphCreatorBase = GraphCreator::GraphCreatorBase;
 
-    SocialNetworkCreator(const GraphCreator & gc, const PersonCreator & pc,
+    SocialNetworkCreator(const GraphCreatorBase & gc, const PersonCreator & pc,
                          bool rename_=false):
         graph_creator{gc}, person_creator{pc}, rename{rename_} {}
 
-    SocialNetworkCreator(GraphCreator && gc, PersonCreator && pc,
+    SocialNetworkCreator(GraphCreatorBase && gc, PersonCreator && pc,
                          bool rename_=false):
-        graph_creator{std::forward<GraphCreator>(gc)},
+        graph_creator{std::forward<GraphCreatorBase>(gc)},
         person_creator{std::forward<PersonCreator>(pc)}, rename{rename_} {}
 
     Graph apply()
@@ -41,7 +40,7 @@ namespace ElectionManipulation{
 
   private:
     // make the class copiable/movable with a deep copy
-    apsc::PointerWrapper<GraphCreator> graph_creator;
+    apsc::PointerWrapper<GraphCreatorBase> graph_creator;
     PersonCreator person_creator;
     bool rename;
   };
