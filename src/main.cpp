@@ -2,13 +2,13 @@
 #include <sstream>
 #include <filesystem>
 #include "Utilities/GetPot"
-//#include <random>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsuggest-override"
-//#include <boost/graph/adjacency_list.hpp>
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 #include <boost/graph/graph_utility.hpp> // print_graph
 #include <boost/graph/adjacency_list_io.hpp>
+#include <boost/graph/graphviz.hpp>
 #pragma GCC diagnostic pop
 
 #include "EMUtilities.hpp"
@@ -18,8 +18,6 @@
 #include "SocialNetworkCreator.hpp"
 #include "ManipulatorInfluence.hpp"
 #include "PerformanceEvaluator.hpp"
-//#include "Utilities/Factory.hpp"
-// #include "LoadFactory.hpp"
 
 
 static_assert(std::is_default_constructible_v<ElectionManipulation::Person>,
@@ -35,6 +33,7 @@ int main(int argc, char** argv)
 {
   using namespace ElectionManipulation;
   using namespace ElectionManipulation::EMTraits;
+
 
   GetPot cl(argc,argv);
   if (cl.search(2, "--help", "-h")){
@@ -91,10 +90,10 @@ int main(int argc, char** argv)
   }
   catch (std::invalid_argument & e)
   {
-    std::cout << e.what() << std::endl;
-    std::cout << "Registered methods are " << std::endl;
+    std::cerr << e.what() << std::endl;
+    std::cerr << "Registered methods are " << std::endl;
     printRegistered(MyFactory);
-    return 2;
+    return 1;
   }
 
 
@@ -113,7 +112,16 @@ int main(int argc, char** argv)
 
   Graph my_graph{snc.apply()};
 
+
+  std::ofstream dotfile;
+
+  dotfile.open("out/test.dot");
+  write_graphviz(dotfile, my_graph);
+  dotfile.close();
+
+
 //  print_graph(my_graph, std::cout);
+
 //  std::cout << boost::write(my_graph);
 
 
@@ -127,7 +135,7 @@ int main(int argc, char** argv)
   std::ostringstream tmp;
 
   tmp << "out/" << GCmethod << "_N" << num_vertices(my_graph)
-      << "_E" << num_edges(my_graph) << "_rounds" << rounds << ".dat";
+      << "_E" << num_edges(my_graph) << "_lambda" << lambda << ".dat";
   std::ofstream file (tmp.str());
 
   file << 0 << " " << pe.error_estimation_prob(2) << '\n';
@@ -141,6 +149,11 @@ int main(int argc, char** argv)
   file.close();
 
 
+  boost::dynamic_properties dp = create_dynamicProperties_writing(my_graph);
+
+  dotfile.open("out/test_w_property.dot");
+  write_graphviz_dp(dotfile, my_graph, dp);
+  dotfile.close();
 
 
   return 0;

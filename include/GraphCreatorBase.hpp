@@ -30,7 +30,7 @@ namespace ElectionManipulation::GraphCreator{
     //! a string that identify the general type of Graph Creator
     virtual std::string name() const=0;
 
-    virtual void set_gen(const RandomGenerator&)=0;
+    virtual void set_gen(const RandomGenerator&) {}
 
     virtual void read_params(GetPot)=0;
 

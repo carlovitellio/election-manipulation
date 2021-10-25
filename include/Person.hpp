@@ -3,6 +3,11 @@
 
 #include <iostream>
 #include <random>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsuggest-override"
+#include <boost/property_map/dynamic_property_map.hpp> // for the dynamic properties helper function
+#include <boost/graph/adjacency_list.hpp>
+#pragma GCC diagnostic pop
 
 namespace ElectionManipulation{
   //! Class that identifies a person in the network
@@ -60,6 +65,30 @@ namespace ElectionManipulation{
     void update_marginal_utility();
 
   };
+
+
+  //! Helper function for constructing a dynamic property associated with a graph
+  //! It is based on the class Person defined above
+  template <class Graph>
+  boost::dynamic_properties create_dynamicProperties_reading(Graph& g)
+  {
+    boost::dynamic_properties dp(boost::ignore_other_properties);
+    // dp.property("node_id",               get(boost::vertex_index,g));
+    dp.property("Name",                  get(&Person::name, g));
+    dp.property("Probability of voting", get(&Person::prob_voting_c0, g));
+    dp.property("Resistance",            get(&Person::resistance, g));
+    dp.property("Estimated probability", get(&Person::manipulator_estim_prob, g));
+
+    return dp;
+  }
+
+  template <class Graph>
+  boost::dynamic_properties create_dynamicProperties_writing(Graph& g)
+  {
+    boost::dynamic_properties dp{create_dynamicProperties_reading(g)};
+    dp.property("node_id",               get(boost::vertex_index,g));
+    return dp;
+  }
 
 } // end of namespace ElectionManipulation
 

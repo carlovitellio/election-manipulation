@@ -68,7 +68,7 @@ export CXX
 export DOXYFILE=$(ROOT)/Doxyfile
 
 # Where the Boost library resides
-mkBoostInc?=/usr/include/boost/
+mkBoostInc=/usr/local/boost_1_77_0
 BOOST_DIR=$(mkBoostInc)
 
 INCLS  = -I. -I./include -I$(BOOST_DIR)
