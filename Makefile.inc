@@ -51,7 +51,7 @@ DEBUG=yes
 endif
 
 ifeq ($(DEBUG),yes)
-  OPTFLAGS=-g
+  OPTFLAGS=-O0 -g
 else
   OPTFLAGS=-O3 -funroll-loops
   DEFINES+=-DNDEBUG
@@ -59,8 +59,6 @@ endif
 
 
 export STDFLAGS=-std=c++17
-
-
 
 export CC
 export CXX

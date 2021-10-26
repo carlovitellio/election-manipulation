@@ -1,5 +1,5 @@
 #include "GraphCreatorErdosRenyi.hpp"
-#include "GraphCreatorRMAT.hpp"
+#include <boost/graph/erdos_renyi_generator.hpp>
 
 namespace ElectionManipulation::GraphCreator{
   using Graph = EMTraits::Graph;
@@ -11,8 +11,10 @@ namespace ElectionManipulation::GraphCreator{
 
   Graph GraphCreatorErdosRenyi::create()
   {
-    GraphCreatorRMAT gc(gen, N, E, 0.25, 0.25, 0.25, 0.25);
-    return gc.create();
+    using ERGen = boost::erdos_renyi_iterator<RandomGenerator, Graph>;
+    Graph g(ERGen(gen, N, E), ERGen(), N);
+
+    return g;
   }
 
   void GraphCreatorErdosRenyi::read_params(GetPot GPfile)
@@ -20,6 +22,5 @@ namespace ElectionManipulation::GraphCreator{
     N = GPfile("Graph_option/N", 100);
     E = GPfile("Graph_option/E", 200);
   }
-
 
 } // end namespace ElectionManipulation::GraphCreator

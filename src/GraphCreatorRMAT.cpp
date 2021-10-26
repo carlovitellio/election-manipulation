@@ -7,7 +7,8 @@ namespace ElectionManipulation::GraphCreator{
   using Graph = EMTraits::Graph;
 
   GraphCreatorRMAT::GraphCreatorRMAT(
-                  RandomGenerator& gen_, std::size_t N_, std::size_t E_,
+                  RandomGenerator& gen_, Graph::vertices_size_type N_,
+                  Graph::edges_size_type E_,
                   double a_, double b_, double c_, double d_):
   gen{gen_}, N{N_}, E{E_}, a{a_}, b{b_}, c{c_}, d{d_}
   {
@@ -37,6 +38,9 @@ namespace ElectionManipulation::GraphCreator{
   Graph GraphCreatorRMAT::create()
   {
     using RMATGen = boost::rmat_iterator<RandomGenerator, Graph>;
+    std::clog << "Implementig a R-MAT graph with " << N << " vertices and " << E
+              << " edges. \n Probability of each edge to be placed in each quadrants are "
+              << a << " " << b << " " << c << " " << d << std::endl;
     Graph g(RMATGen(gen, N, E, a, b, c, d), RMATGen(), N);
 
     return g;
@@ -47,11 +51,10 @@ namespace ElectionManipulation::GraphCreator{
     N = GPfile("Graph_option/N", 100);
     E = GPfile("Graph_option/E", 200);
 
-    a = GPfile("Graph_option/R-MAT/a", -1.);
-    b = GPfile("Graph_option/R-MAT/b", -1.);
-    c = GPfile("Graph_option/R-MAT/c", -1.);
-    d = GPfile("Graph_option/R-MAT/d", -1.);
+    a = GPfile("Graph_option/R-MAT/a", 0.25);
+    b = GPfile("Graph_option/R-MAT/b", 0.25);
+    c = GPfile("Graph_option/R-MAT/c", 0.25);
+    d = GPfile("Graph_option/R-MAT/d", 0.25);
   }
-
 
 } // end namespace ElectionManipulation::GraphCreator

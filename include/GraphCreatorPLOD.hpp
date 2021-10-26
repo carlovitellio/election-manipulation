@@ -13,9 +13,9 @@ namespace ElectionManipulation::GraphCreator{
 
     GraphCreatorPLOD()=default;
 
-    GraphCreatorPLOD(RandomGenerator& gen_, Graph::vertex_descriptor N_,
-                           double alpha_, double beta_):
-    gen{gen_}, N{N_}, alpha{alpha_}, beta{beta_}
+    GraphCreatorPLOD(RandomGenerator& gen_, Graph::vertices_size_type N_,
+                     double alpha_, double beta_):
+                     gen{gen_}, N{N_}, alpha{alpha_}, beta{beta_}
     {};
 
     std::unique_ptr<GraphCreatorBase> clone() const override;

@@ -1,7 +1,6 @@
 #ifndef GRAPHCREATORRMAT_HPP
 #define GRAPHCREATORRMAT_HPP
 
-
 #include "EMTraits.hpp"
 #include "GraphCreatorBase.hpp"
 
@@ -18,7 +17,8 @@ namespace ElectionManipulation::GraphCreator{
 
     GraphCreatorRMAT()=default;
 
-    GraphCreatorRMAT(RandomGenerator& gen_, std::size_t N_, std::size_t E_,
+    GraphCreatorRMAT(RandomGenerator& gen_, Graph::vertices_size_type N_,
+                     Graph::edges_size_type E_,
                      double a_, double b_, double c_, double d_);
 
     std::unique_ptr<GraphCreatorBase> clone() const override;
@@ -33,8 +33,8 @@ namespace ElectionManipulation::GraphCreator{
 
   private:
     RandomGenerator gen;
-    std::size_t N; //!< Number of vertices in the graph
-    std::size_t E; //!< Number of edges in the graph
+    Graph::vertices_size_type N; //!< Number of vertices in the graph
+    Graph::edges_size_type E;    //!< Number of edges in the graph
     double a, b, c, d; /*!< a, b, c, and d represent the probability that
                                   a generated edge is placed of each of the 4
                                   quadrants of the partitioned adjacency matrix */

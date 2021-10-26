@@ -1,6 +1,8 @@
 #include "GraphCreatorFactory.hpp"
-#include "GraphCreatorRMAT.hpp"
 #include "GraphCreatorErdosRenyi.hpp"
+#include "GraphCreatorPLOD.hpp"
+#include "GraphCreatorRMAT.hpp"
+#include "GraphCreatorSmallWorld.hpp"
 
 namespace ElectionManipulation::GraphCreator{
 
@@ -8,8 +10,10 @@ namespace ElectionManipulation::GraphCreator{
     __attribute__((constructor))
     void registerCreator()
     {
-      addRuleToFactory<GraphCreatorRMAT>("R-MAT");
       addRuleToFactory<GraphCreatorErdosRenyi>("Erdos-Renyi");
+      addRuleToFactory<GraphCreatorPLOD>("PLOD");
+      addRuleToFactory<GraphCreatorRMAT>("R-MAT");
+      addRuleToFactory<GraphCreatorSmallWorld>("Small-World");
     }
   }
 

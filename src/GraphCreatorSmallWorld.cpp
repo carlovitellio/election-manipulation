@@ -1,6 +1,5 @@
 #include "GraphCreatorSmallWorld.hpp"
 #include <boost/graph/small_world_generator.hpp>
-#include "GraphCreatorFactory.hpp"
 
 namespace ElectionManipulation::GraphCreator{
   using Graph = EMTraits::Graph;
@@ -23,14 +22,6 @@ namespace ElectionManipulation::GraphCreator{
     N = GPfile("Graph_option/N", 100);
     k = GPfile("Graph_option/small_world_generator/k", 4);
     p = GPfile("Graph_option/small_world_generator/p", 0.05);
-  }
-
-  namespace{
-    __attribute__((constructor))
-    void registerCreator()
-    {
-      addRuleToFactory<GraphCreatorSmallWorld>("Small-World");
-    }
   }
 
 } // end namespace ElectionManipulation::GraphCreator

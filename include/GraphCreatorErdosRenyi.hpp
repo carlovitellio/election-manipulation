@@ -6,7 +6,7 @@
 
 namespace ElectionManipulation::GraphCreator{
 
-  //! Makes available the Erdos Rényi graph generator using the R-MAT generator
+  //! Makes available the Erdos Rényi graph generator
   /*!
 
   */
@@ -18,7 +18,8 @@ namespace ElectionManipulation::GraphCreator{
 
     GraphCreatorErdosRenyi()=default;
 
-    GraphCreatorErdosRenyi(RandomGenerator& gen_, std::size_t N_, std::size_t E_):
+    GraphCreatorErdosRenyi(RandomGenerator& gen_, Graph::vertices_size_type N_,
+                           Graph::edges_size_type E_):
                            gen{gen_}, N{N_}, E{E_}
     {};
 
@@ -35,8 +36,8 @@ namespace ElectionManipulation::GraphCreator{
 
   private:
     RandomGenerator gen;
-    std::size_t N; //!< Number of vertices in the graph
-    std::size_t E; //!< Number of edges in the graph
+    Graph::vertices_size_type N; //!< Number of vertices in the graph
+    Graph::edges_size_type E;    //!< Number of edges in the graph
 
   };
 
