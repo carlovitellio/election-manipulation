@@ -55,16 +55,38 @@ MAIN_OBJS = $(MAIN_SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 exe_sources = $(SRC_DIR)/main.cpp
 EXEC = $(exe_sources:.cpp=)
 
+# get all cpp files for the dependency file
+SRCS=$(wildcard $(SRC_DIR)/*.cpp)
+
 #========================== NEW THE DEFINITION OF THE TARGETS
-.phony= all clean distclean doc library dynamic help symboliclink
+.phony= all clean depend distclean doc dynamic exec help
 
-.DEFAULT_GOAL = all
+.DEFAULT_GOAL = help
 
-all: $(DEPEND) $(EXEC)
+help:
+	@echo "make help prints this"
+	@echo "make dynamic makes all dynamic libraries"
+	@echo "make exec compiles executable"
+	@echo "make depend makes dependency file"
+	@echo "make all runs make depend, dynamic and exec"
+	@echo "make clean removes the executable and the object directory"
+	@echo "make distclean removes dependency file, documentation, libraries "
+	@echo "	and object directories and the executable"
+	@echo "make doc create the documentation via Doxygen"
+	@echo "macro DEBUG=no deactivates debugging"
+
+all:
+	$(MAKE) depend
+	$(MAKE) dynamic
+	$(MAKE) exec
+
+exec: $(EXEC)
+
+depend: $(DEPEND)
 
 clean:
 	$(RM) -f $(EXEC)
-#	$(RM) -r $(OBJ_DIR)
+	$(RM) -r $(OBJ_DIR)
 
 distclean:
 	$(MAKE) clean
@@ -76,43 +98,30 @@ distclean:
 doc:
 	doxygen $(DOXYFILE)
 
-library:
-	$(MAKE) dynamic
-#	$(MAKE) symboliclink
-
 dynamic: CXXFLAGS += -fPIC
 dynamic: $(FACTORY_LIB_OBJS) $(BOOST_LIB_OBJS) $(INPUT_LIB_OBJS)
 	@echo " "
 	@echo "--- Building factory library ---"
 	@mkdir -p $(LIB_DIR)
-	$(CXX) -shared -Wl,-soname,$(FACTORY_LIBFILE) $(FACTORY_LIB_OBJS) -o $(FACTORY_LIB)
+	@$(CXX) -shared -Wl,-soname,$(FACTORY_LIBFILE) $(FACTORY_LIB_OBJS) -o $(FACTORY_LIB)
 	@echo "--- Building boost creators library ---"
-	$(CXX) -shared $(LDFLAGS) $(LIBLIB) -Wl,-soname,$(BOOST_LIBFILE) $(BOOST_LIB_OBJS) -o $(BOOST_LIB)
+	@$(CXX) -shared $(LDFLAGS) $(LIBLIB) -Wl,-soname,$(BOOST_LIBFILE) $(BOOST_LIB_OBJS) -o $(BOOST_LIB)
 	@echo "--- Building input creator library ---"
-	$(CXX) -shared $(LDFLAGS) $(LIBLIB) -Wl,-soname,$(INPUT_LIBFILE) $(INPUT_LIB_OBJS) -o $(INPUT_LIB)
-
-symboliclink:
+	@$(CXX) -shared $(LDFLAGS) $(LIBLIB) -Wl,-soname,$(INPUT_LIBFILE) $(INPUT_LIB_OBJS) -o $(INPUT_LIB)
 	@echo " "
-	@echo "Creating symbolic links for the libraries"
-	@ln -s $(FACTORY_LIB).$(VERSION).$(RELEASE) $(FACTORY_LIB).$(VERSION)
-	@ln -s $(FACTORY_LIB).$(VERSION).$(RELEASE) $(FACTORY_LIB)
-	@ln -s $(BOOST_LIB).$(VERSION).$(RELEASE) $(BOOST_LIB).$(VERSION)
-	@ln -s $(BOOST_LIB).$(VERSION).$(RELEASE) $(BOOST_LIB)
-	@ln -s $(INPUT_LIB).$(VERSION).$(RELEASE) $(INPUT_LIB).$(VERSION)
-	@ln -s $(INPUT_LIB).$(VERSION).$(RELEASE) $(INPUT_LIB)
 
-help:
-	@echo $(BOOST_LIB_OBJS)
-	@echo $(BOOST_LIB_SRCS)
 
 $(FACTORY_LIB_OBJS): $(FACTORY_LIB_SRCS) $(HEADERS) | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+	@echo "--- Compiling $< related to the factory library ---"
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(BOOST_LIB_OBJS): $(OBJ_DIR)/%.o:$(SRC_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+	@echo "--- Compiling $< related to the boost creators library ---"
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(INPUT_LIB_OBJS): $(INPUT_LIB_SRCS) $(HEADERS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+$(INPUT_LIB_OBJS): $(INPUT_LIB_SRCS) $(HEADERS) | $(OBJ_DIR)
+	@echo "--- Compiling $< related to the input creator library ---"
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
@@ -120,12 +129,11 @@ $(OBJ_DIR):
 $(EXEC): $(MAIN_OBJS)
 
 $(MAIN_OBJS): $(OBJ_DIR)/%.o:$(SRC_DIR)/%.cpp | $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+	@echo "--- Compiling $< related to the main ---"
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(DEPEND): $(SRCS)
 	$(RM) $(DEPEND)
 	for f in $(SRCS); do \
 	$(CXX) $(STDFLAGS) $(CPPFLAGS) -MM $$f >> $(DEPEND); \
 	done
-
--include $(DEPEND)

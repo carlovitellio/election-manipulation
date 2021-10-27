@@ -39,7 +39,7 @@ namespace ElectionManipulation::GraphCreator{
   {
     using RMATGen = boost::rmat_iterator<RandomGenerator, Graph>;
     std::clog << "Implementig a R-MAT graph with " << N << " vertices and " << E
-              << " edges. \n Probability of each edge to be placed in each quadrants are "
+              << " edges. \nProbability of each edge to be placed in each quadrants are "
               << a << " " << b << " " << c << " " << d << std::endl;
     Graph g(RMATGen(gen, N, E, a, b, c, d), RMATGen(), N);
 

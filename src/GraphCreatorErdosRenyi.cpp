@@ -12,6 +12,8 @@ namespace ElectionManipulation::GraphCreator{
   Graph GraphCreatorErdosRenyi::create()
   {
     using ERGen = boost::erdos_renyi_iterator<RandomGenerator, Graph>;
+    std::clog << "Implementig a Erdos-Renyi graph with " << N << " vertices and " << E
+              << " edges. \nEdges are seleceted randomly" << std::endl;
     Graph g(ERGen(gen, N, E), ERGen(), N);
 
     return g;

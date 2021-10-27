@@ -12,6 +12,11 @@ namespace ElectionManipulation::GraphCreator{
   Graph GraphCreatorPLOD::create()
   {
     using SFGen = boost::plod_iterator<RandomGenerator, Graph>;
+    std::clog << "Implementig a scale-free graph with " << N << " vertices "
+              << "using the Power Law Out Degree (PLOD) algorithm.\n"
+              << "The parameters used are:\n"
+              << "alpha = " << alpha << "\n"
+              << "beta = " << beta << std::endl;
     Graph g(SFGen(gen, N, alpha, beta), SFGen(), N);
 
     return g;

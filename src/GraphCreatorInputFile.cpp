@@ -20,6 +20,8 @@ namespace ElectionManipulation::GraphCreator{
   {
     std::string extension = filename.substr(filename.find_last_of(".") + 1);
 
+    std::clog << "Reading the graph stored in " << filename << std::endl;
+
     if((extension == "dot") || (extension == "gv")) {
       return create(InputFileType<GRAPHVIZ>());
     } else if((extension == "graphml") || (extension == "xml")) {
@@ -28,6 +30,7 @@ namespace ElectionManipulation::GraphCreator{
       std::cerr << "Input file must be stored in file with one of the following extensions"
                 << "\n\t.dot"
                 << "\n\t.gv"
+                << "\n\t.graphml"
                 << "\n\t.xml" << std::endl;
       std::exit(1);
     }
@@ -59,6 +62,11 @@ namespace ElectionManipulation::GraphCreator{
   void GraphCreatorInputFile::read_params(GetPot GPfile)
   {
     filename = GPfile("Graph_option/Input_graph", "");
+    if(filename="")
+    {
+      std::cerr << "Specify an input graph to be read" << std::endl;
+      std::exit(1);
+    }
   }
 
   namespace{
