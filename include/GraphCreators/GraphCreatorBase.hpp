@@ -4,9 +4,9 @@
 #include "EMTraits.hpp"
 #include <boost/graph/adjacency_list.hpp>
 #include <memory>
-#include <functional>
+//#include <functional>
 #include <string>
-#include "Utilities/GetPot"
+#include "ExternalUtilities/GetPot"
 
 namespace ElectionManipulation::GraphCreator{
 
@@ -33,6 +33,7 @@ namespace ElectionManipulation::GraphCreator{
     virtual void set_gen(const RandomGenerator&) {}
 
     virtual void read_params(GetPot)=0;
+    virtual bool get_read_attributes() const=0;
 
     virtual Graph create()=0;
   };

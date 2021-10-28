@@ -1,7 +1,8 @@
 #include <iostream>
 #include <sstream>
-#include <filesystem>
-#include "Utilities/GetPot"
+#include <stdexcept>
+#include "ExternalUtilities/GetPot"
+//#include "EMUtilities.hpp"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsuggest-override"
@@ -11,22 +12,14 @@
 #include <boost/graph/graphviz.hpp>
 #pragma GCC diagnostic pop
 
-#include "EMUtilities.hpp"
 #include "EMTraits.hpp"
-#include "GraphCreatorFactory.hpp"
+#include "GraphCreators/GCTraits.hpp"
+#include "Distributions/DistributionsTraits.hpp"
+#include "ReadInformation.hpp"
 #include "PersonCreator.hpp"
 #include "SocialNetworkCreator.hpp"
 #include "ManipulatorInfluence.hpp"
 #include "PerformanceEvaluator.hpp"
-
-
-static_assert(std::is_default_constructible_v<ElectionManipulation::Person>,
-                  "The Boost Graph Library requires default-constructible vertex properties");
-
-
-void printHelp(){
-
-}
 
 
 int main(int argc, char** argv)
@@ -34,81 +27,32 @@ int main(int argc, char** argv)
   using namespace ElectionManipulation;
   using namespace ElectionManipulation::EMTraits;
 
-
   GetPot cl(argc,argv);
-  if (cl.search(2, "--help", "-h")){
-    printHelp();
-    return 0;
-  }
-
-
-  std::string inputFile = cl("InputFile","../input/graph_input.getpot");
-  std::filesystem::path filepath(inputFile);
-  if (!std::filesystem::exists(filepath))
-    {
-      std::cerr<<"Input file "<<inputFile<<" does not exists\n";
-      return 1;
-    }
-
-  GetPot GPfile(inputFile.c_str());
-
-  //! Read the graph configuration parameters
-
-
-  //! Instantiating the Factory collecting the graph creator methods
-  using GCHandler = GraphCreator::GCHandler; // alias to a apsc::PointerWrapper<GCBase>
-  using GraphFactory = GraphCreator::GraphCreatorFactory;
-
-  const GraphFactory & MyFactory = GraphCreator::MyFactory;
-
-  if (cl.search(2, "--list", "-l"))
-  {
-    printRegistered(MyFactory);
-    return 0;
-  }
-
-  std::string GCmethod = GPfile("Graph_option/graph_type", "");
-  if(GCmethod == "?"){
-    printRegistered(MyFactory);
-    return 0;
-  } else if (GCmethod == "") {
-    std::cerr << "Invalid graph type requested" << std::endl;
-    printRegistered(MyFactory);
-    return 1;
-  }
 
   std::random_device rd ;
-  RandomGenerator reng{rd()};
+  ElectionManipulation::EMTraits::RandomGenerator gen{rd()};
 
-  GCHandler gc_ptr;
+  ReadInfoGetPot reader(cl, gen);
 
-  try {
-    gc_ptr = MyFactory.create(GCmethod);
-    gc_ptr->set_gen(reng);
-    gc_ptr->read_params(GPfile);
-    std::clog << "Implementing the graph with " << GCmethod << " creator" << std::endl;
-  }
-  catch (std::invalid_argument & e)
-  {
-    std::cerr << e.what() << std::endl;
-    std::cerr << "Registered methods are " << std::endl;
-    printRegistered(MyFactory);
-    return 1;
-  }
+  reader.check_help();
+  reader.read_input_file();
 
 
-  double lambda = GPfile("Person_option/Resistance/poisson/lambda", -1.);
-  double alpha = GPfile("Person_option/ProbabilityVoting/beta/alpha", -1.);
-  double beta = GPfile("Person_option/ProbabilityVoting/beta/beta", -1.);
+  using GCHandler = GraphCreator::GCHandler; // alias to a apsc::PointerWrapper
+
+  GCHandler gc_ptr = reader.readInfoGraphCreator();
 
 
-  // Person
-  DistributionResistance distribution(lambda);
-  DistributionProbability distrib2(alpha, beta);
+  using ResHandler = Distributions::ResDistHandler<RandomGenerator> ;
+  using VotHandler = Distributions::VotDistHandler<RandomGenerator> ;
 
-  PersonCreator pc(reng, distribution, distrib2);
+  ResHandler resistance_distr_ptr = reader.readInfoResistanceDist();
+  VotHandler voting_distr_ptr = reader.readInfoVotingDist();
 
-  SocialNetworkCreator snc(*gc_ptr, pc);
+
+  PersonCreator<RandomGenerator> pc(gen, *resistance_distr_ptr, *voting_distr_ptr);
+
+  SocialNetworkCreator<RandomGenerator> snc(*gc_ptr, pc);
 
   Graph my_graph{snc.apply()};
 
@@ -125,13 +69,13 @@ int main(int argc, char** argv)
 //  std::cout << boost::write(my_graph);
 
 
-  std::size_t steps  = GPfile("InfluenceOption/Estimation/steps", 1);
-  std::size_t rounds = GPfile("InfluenceOption/rounds", 10);
+//  std::size_t steps  = GPfile("InfluenceOption/Estimation/steps", 1);
+//  std::size_t rounds = GPfile("InfluenceOption/rounds", 10);
 
   PerformanceEvaluator pe(my_graph);
 
-  ManipulatorInfluence mi(my_graph, steps);
-
+//  ManipulatorInfluence mi(my_graph, steps);
+/*
   std::ostringstream tmp;
 
   tmp << "out/" << GCmethod << "_N" << num_vertices(my_graph)
@@ -147,7 +91,7 @@ int main(int argc, char** argv)
   }
 
   file.close();
-
+*/
 
   boost::dynamic_properties dp = create_dynamicProperties_writing(my_graph);
 

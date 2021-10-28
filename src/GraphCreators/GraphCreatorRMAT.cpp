@@ -1,32 +1,30 @@
-#include "GraphCreatorRMAT.hpp"
+#include "GraphCreators/GraphCreatorRMAT.hpp"
 #include <boost/graph/rmat_graph_generator.hpp>
 #include <iostream>
 #include <cmath>
+#include <string>
+#include <stdexcept>
 
 namespace ElectionManipulation::GraphCreator{
   using Graph = EMTraits::Graph;
 
-  GraphCreatorRMAT::GraphCreatorRMAT(
-                  RandomGenerator& gen_, Graph::vertices_size_type N_,
-                  Graph::edges_size_type E_,
-                  double a_, double b_, double c_, double d_):
-  gen{gen_}, N{N_}, E{E_}, a{a_}, b{b_}, c{c_}, d{d_}
+  void GraphCreatorRMAT::check_params_consistency()
   {
     if ( (a<0) || (a>1) || (b<0) || (b>1) ||
          (c<0) || (c>1) || (d<0) || (d>1) ||
          (fabs(a+b+c+d) - 1. > std::numeric_limits<double>::epsilon()))
     {
-      std::cerr << "Wrong input parameters for a G-MAT graph" << std::endl
-                << "a,b,c,d should be in [0,1] and a+b+c+d=1" << std::endl
-                << "a+b+c+d = " << a+b+c+d << std::endl;
-      std::exit(1);
+      std::string excep = "Wrong input parameters for a G-MAT graph\n \
+                          a,b,c,d should be in [0,1] and a+b+c+d=1\n \
+                          a+b+c+d = " + std::to_string(a+b+c+d) + "\n";
+      throw std::invalid_argument(excep);
     }
     typedef typename Graph::directed_category Cat;
     if(boost::detail::is_directed(Cat()) && (b!=c))
     {
-      std::cerr << "Wrong input parameters for a G-MAT graph" << std::endl
-                << "b,c should be equal in undirected graphs" << std::endl;
-      std::exit(1);
+      std::string excep = "Wrong input parameters for a G-MAT graph\n \
+                          b,c should be equal in undirected graphs\n";
+      throw std::invalid_argument(excep);
     }
   }
 
@@ -55,6 +53,8 @@ namespace ElectionManipulation::GraphCreator{
     b = GPfile("Graph_option/R-MAT/b", 0.25);
     c = GPfile("Graph_option/R-MAT/c", 0.25);
     d = GPfile("Graph_option/R-MAT/d", 0.25);
+
+    check_params_consistency();
   }
 
 } // end namespace ElectionManipulation::GraphCreator

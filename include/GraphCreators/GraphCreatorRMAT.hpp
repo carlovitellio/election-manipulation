@@ -2,7 +2,7 @@
 #define GRAPHCREATORRMAT_HPP
 
 #include "EMTraits.hpp"
-#include "GraphCreatorBase.hpp"
+#include "GraphCreators/GraphCreatorBase.hpp"
 
 namespace ElectionManipulation::GraphCreator{
 
@@ -19,7 +19,9 @@ namespace ElectionManipulation::GraphCreator{
 
     GraphCreatorRMAT(RandomGenerator& gen_, Graph::vertices_size_type N_,
                      Graph::edges_size_type E_,
-                     double a_, double b_, double c_, double d_);
+                     double a_, double b_, double c_, double d_):
+                 gen{gen_}, N{N_}, E{E_}, a{a_}, b{b_}, c{c_}, d{d_}
+                 {check_params_consistency();}
 
     std::unique_ptr<GraphCreatorBase> clone() const override;
 
@@ -27,8 +29,10 @@ namespace ElectionManipulation::GraphCreator{
 
     void set_gen(const RandomGenerator& gen_) override {gen=gen_;}
     void read_params(GetPot GPFile) override;
+    bool get_read_attributes() const override {return false;}
 
-    //! a string that identify the general type of Graph Creator
+    void check_params_consistency();
+
     std::string name() const override {return "R-MAT";}
 
   private:

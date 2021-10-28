@@ -1,7 +1,7 @@
 #ifndef GRAPHCREATORINPUTFILE_HPP
 #define GRAPHCREATORINPUTFILE_HPP
 #include "EMTraits.hpp"
-#include "GraphCreatorBase.hpp"
+#include "GraphCreators/GraphCreatorBase.hpp"
 #include <string>
 
 namespace ElectionManipulation::GraphCreator{
@@ -20,7 +20,8 @@ namespace ElectionManipulation::GraphCreator{
   public:
     GraphCreatorInputFile()=default;
 
-    GraphCreatorInputFile(std::string filename_): filename{filename_} {}
+    GraphCreatorInputFile(std::string filename_, bool read_attrib):
+                  filename{filename_}, read_attributes{read_attrib} {}
 
     std::unique_ptr<GraphCreatorBase> clone() const override;
 
@@ -28,12 +29,13 @@ namespace ElectionManipulation::GraphCreator{
 
     void read_params(GetPot) override;
 
-    //! a string that identify the general type of Graph Creator
     std::string name() const override {return "Input-file";}
+
+    bool get_read_attributes() const override {return read_attributes;}
 
   private:
     std::string filename;
-
+    bool read_attributes;
     Graph create(InputFileType<GRAPHVIZ>);
     Graph create(InputFileType<GRAPHML>);
   };

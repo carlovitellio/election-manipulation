@@ -1,4 +1,4 @@
-#include "GraphCreatorPLOD.hpp"
+#include "GraphCreators/GraphCreatorPLOD.hpp"
 #include <boost/graph/plod_generator.hpp>
 
 namespace ElectionManipulation::GraphCreator{

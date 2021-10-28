@@ -1,4 +1,4 @@
-#include "GraphCreatorInputFile.hpp"
+#include "GraphCreators/GraphCreatorInputFile.hpp"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsuggest-override"
 #pragma GCC diagnostic ignored "-Wdeprecated-copy"
@@ -6,7 +6,11 @@
 #include <libs/graph/src/graphml.cpp>
 #pragma GCC diagnostic pop
 #include "Person.hpp"
-#include "GraphCreatorFactory.hpp"
+#include "GraphCreators/GraphCreatorFactory.hpp"
+#include <stdexcept>
+#include <boost/lexical_cast.hpp>
+#include <filesystem>
+
 
 namespace ElectionManipulation::GraphCreator{
   using Graph = EMTraits::Graph;
@@ -18,6 +22,13 @@ namespace ElectionManipulation::GraphCreator{
 
   Graph GraphCreatorInputFile::create()
   {
+    std::filesystem::path filepath(filename);
+    if (!std::filesystem::exists(filepath))
+      {
+        std::cerr << "Input file " << filename << " does not exists\n";
+        std::exit(1);
+      }
+
     std::string extension = filename.substr(filename.find_last_of(".") + 1);
 
     std::clog << "Reading the graph stored in " << filename << std::endl;
@@ -27,46 +38,61 @@ namespace ElectionManipulation::GraphCreator{
     } else if((extension == "graphml") || (extension == "xml")) {
       return create(InputFileType<GRAPHML>());
     } else {
-      std::cerr << "Input file must be stored in file with one of the following extensions"
-                << "\n\t.dot"
-                << "\n\t.gv"
-                << "\n\t.graphml"
-                << "\n\t.xml" << std::endl;
-      std::exit(1);
+      std::string excep = "Input file must be stored in file with one of the \
+                          following extensions \n\t.dot \n\t.gv \n\t.graphml \
+                          \n\t.xml\n";
+      throw std::invalid_argument(excep);
     }
   }
 
   Graph GraphCreatorInputFile::create(InputFileType<GRAPHVIZ>)
   {
     std::ifstream dot(filename);
-    //! Constructs an empty graph
+    // Constructs an empty graph
     Graph g(0);
 
-    boost::dynamic_properties dp = create_dynamicProperties_reading(g);
+    boost::dynamic_properties dp;
+    dp.property("node_id", get(boost::vertex_index,g));
+
+    if(read_attributes)
+    {
+      dp = create_dynamicProperties_reading(g);
+    }
 
     read_graphviz(dot, g, dp);
+
     return g;
   }
 
   Graph GraphCreatorInputFile::create(InputFileType<GRAPHML>)
   {
     std::ifstream xml(filename);
-    //! Constructs an empty graph
+    // Construct an empty graph
     Graph g(0);
-    boost::dynamic_properties dp = create_dynamicProperties_reading(g);
+
+    boost::dynamic_properties dp;
+    dp.property("node_id", get(boost::vertex_index,g));
+
+    if(read_attributes)
+    {
+      dp = create_dynamicProperties_reading(g);
+    }
 
     read_graphml(xml, g, dp);
+
     return g;
   }
 
   void GraphCreatorInputFile::read_params(GetPot GPfile)
   {
     filename = GPfile("Graph_option/Input_graph", "");
-    if(filename="")
+    if(filename=="")
     {
-      std::cerr << "Specify an input graph to be read" << std::endl;
-      std::exit(1);
+      std::string excep = "Specify an input graph to be read\n";
+      throw std::invalid_argument(excep);
     }
+    std::string read_attrib = GPfile("Graph_option/Input_graph/Read_attributes", "false");
+    read_attributes = boost::lexical_cast<bool>(read_attrib);
   }
 
   namespace{

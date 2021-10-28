@@ -6,8 +6,6 @@ INC_DIR = $(ROOT)/include
 OBJ_DIR = $(ROOT)/obj
 LIB_DIR = $(ROOT)/lib
 
-VERSION = 1
-RELEASE = 0
 
 # Library with factory
 FACTORY_LIBNAME  = GraphFactory
@@ -17,46 +15,46 @@ FACTORY_LIB      = $(LIB_DIR)/$(FACTORY_LIBFILE)
 LDLIBS += -L$(LIB_DIR) -l$(FACTORY_LIBNAME)
 LIBLIB  = -L$(LIB_DIR) -l$(FACTORY_LIBNAME)
 
-FACTORY_LIB_SRCS := $(SRC_DIR)/GraphCreatorFactory.cpp
-FACTORY_LIB_OBJS := $(FACTORY_LIB_SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-# Library with Graph Creators using Boost methods
-BOOST_LIBNAME   = BoostCreators
-BOOST_LIBFILE   = lib$(BOOST_LIBNAME).so
-BOOST_LIB       = $(LIB_DIR)/$(BOOST_LIBFILE)
-BOOST_LIB_SRCS := $(SRC_DIR)/BoostCreators.cpp $(SRC_DIR)/GraphCreatorErdosRenyi.cpp \
-										 $(SRC_DIR)/GraphCreatorPLOD.cpp $(SRC_DIR)/GraphCreatorRMAT.cpp \
-										 $(SRC_DIR)/GraphCreatorSmallWorld.cpp
-BOOST_LIB_OBJS := $(BOOST_LIB_SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+GC_SRC_DIR = $(SRC_DIR)/GraphCreators
+
+# Library with the Graph Factory
+FACTORY_LIB_SRCS := $(GC_SRC_DIR)/GraphCreatorFactory.cpp
+FACTORY_LIB_OBJS := $(FACTORY_LIB_SRCS:$(GC_SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 # Library with Graph Creators with input files
 INPUT_LIBNAME   = InputCreator
 INPUT_LIBFILE   = lib$(INPUT_LIBNAME).so
 INPUT_LIB       = $(LIB_DIR)/$(INPUT_LIBFILE)
-INPUT_LIB_SRCS := $(SRC_DIR)/GraphCreatorInputFile.cpp
-INPUT_LIB_OBJS := $(INPUT_LIB_SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+INPUT_LIB_SRCS := $(GC_SRC_DIR)/GraphCreatorInputFile.cpp
+INPUT_LIB_OBJS := $(INPUT_LIB_SRCS:$(GC_SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
+# Library with Graph Creators using Boost methods
+BOOST_LIBNAME   = BoostCreators
+BOOST_LIBFILE   = lib$(BOOST_LIBNAME).so
+BOOST_LIB       = $(LIB_DIR)/$(BOOST_LIBFILE)
+BOOST_LIB_SRCS := $(filter-out $(FACTORY_LIB_SRCS) $(INPUT_LIB_SRCS),$(wildcard $(GC_SRC_DIR)/*.cpp))
+BOOST_LIB_OBJS := $(BOOST_LIB_SRCS:$(GC_SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 LDLIBS += -L$(LIB_DIR) -l$(BOOST_LIBNAME) -l$(INPUT_LIBNAME)
 
 LDFLAGS+=-Wl,-rpath,$(LIB_DIR)
 
 
-# get all headers in the working directory
-HEADERS = $(wildcard $(INC_DIR)/*.hpp)
-
-
-# get all files for the executable
-MAIN_SRCS = $(SRC_DIR)/Person.cpp $(SRC_DIR)/ManipulatorInfluence.cpp \
-						$(SRC_DIR)/PerformanceEvaluator.cpp
-# get the corresponding object file
-MAIN_OBJS = $(MAIN_SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+# get all headers in the include directory and its subdirectories
+HEADERS = $(shell find $(INC_DIR) -name '*.hpp')
 
 exe_sources = $(SRC_DIR)/main.cpp
 EXEC = $(exe_sources:.cpp=)
 
+# get all files for the executable
+MAIN_SRCS = $(filter-out $(exe_sources),$(wildcard $(SRC_DIR)/*.cpp))
+
+# get the corresponding object file
+MAIN_OBJS = $(MAIN_SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+
 # get all cpp files for the dependency file
-SRCS=$(wildcard $(SRC_DIR)/*.cpp)
+SRCS = $(shell find $(SRC_DIR) -name '*.cpp')
 
 #========================== NEW THE DEFINITION OF THE TARGETS
 .phony= all clean depend distclean doc dynamic exec help
@@ -99,28 +97,28 @@ doc:
 	doxygen $(DOXYFILE)
 
 dynamic: CXXFLAGS += -fPIC
-dynamic: $(FACTORY_LIB_OBJS) $(BOOST_LIB_OBJS) $(INPUT_LIB_OBJS)
+dynamic: $(FACTORY_LIB_OBJS) $(INPUT_LIB_OBJS) $(BOOST_LIB_OBJS)
 	@echo " "
 	@echo "--- Building factory library ---"
 	@mkdir -p $(LIB_DIR)
 	@$(CXX) -shared -Wl,-soname,$(FACTORY_LIBFILE) $(FACTORY_LIB_OBJS) -o $(FACTORY_LIB)
-	@echo "--- Building boost creators library ---"
-	@$(CXX) -shared $(LDFLAGS) $(LIBLIB) -Wl,-soname,$(BOOST_LIBFILE) $(BOOST_LIB_OBJS) -o $(BOOST_LIB)
 	@echo "--- Building input creator library ---"
 	@$(CXX) -shared $(LDFLAGS) $(LIBLIB) -Wl,-soname,$(INPUT_LIBFILE) $(INPUT_LIB_OBJS) -o $(INPUT_LIB)
+	@echo "--- Building boost creators library ---"
+	@$(CXX) -shared $(LDFLAGS) $(LIBLIB) -Wl,-soname,$(BOOST_LIBFILE) $(BOOST_LIB_OBJS) -o $(BOOST_LIB)
 	@echo " "
 
 
 $(FACTORY_LIB_OBJS): $(FACTORY_LIB_SRCS) $(HEADERS) | $(OBJ_DIR)
-	@echo "--- Compiling $< related to the factory library ---"
-	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
-
-$(BOOST_LIB_OBJS): $(OBJ_DIR)/%.o:$(SRC_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
-	@echo "--- Compiling $< related to the boost creators library ---"
+	@echo "--- Compiling $< requested by the factory library ---"
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(INPUT_LIB_OBJS): $(INPUT_LIB_SRCS) $(HEADERS) | $(OBJ_DIR)
-	@echo "--- Compiling $< related to the input creator library ---"
+	@echo "--- Compiling $< requested by the input creator library ---"
+	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+
+$(BOOST_LIB_OBJS): $(OBJ_DIR)/%.o:$(GC_SRC_DIR)/%.cpp $(HEADERS) | $(OBJ_DIR)
+	@echo "--- Compiling $< requested by the boost creators library ---"
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(OBJ_DIR):

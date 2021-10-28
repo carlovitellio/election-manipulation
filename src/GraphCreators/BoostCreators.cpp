@@ -1,8 +1,8 @@
-#include "GraphCreatorFactory.hpp"
-#include "GraphCreatorErdosRenyi.hpp"
-#include "GraphCreatorPLOD.hpp"
-#include "GraphCreatorRMAT.hpp"
-#include "GraphCreatorSmallWorld.hpp"
+#include "GraphCreators/GraphCreatorFactory.hpp"
+#include "GraphCreators/GraphCreatorErdosRenyi.hpp"
+#include "GraphCreators/GraphCreatorPLOD.hpp"
+#include "GraphCreators/GraphCreatorRMAT.hpp"
+#include "GraphCreators/GraphCreatorSmallWorld.hpp"
 
 namespace ElectionManipulation::GraphCreator{
 

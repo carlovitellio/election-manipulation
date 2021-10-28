@@ -1,4 +1,4 @@
-#include "GraphCreatorSmallWorld.hpp"
+#include "GraphCreators/GraphCreatorSmallWorld.hpp"
 #include <boost/graph/small_world_generator.hpp>
 
 namespace ElectionManipulation::GraphCreator{
@@ -13,7 +13,7 @@ namespace ElectionManipulation::GraphCreator{
   {
     using SWGen = boost::small_world_iterator<RandomGenerator, Graph>;
     std::clog << "Implementig a Small-World graph with " << N
-              << " vertices and each vertex is connected to its " << k <<
+              << " vertices and each vertex is connected to its " << k
               << " neighbours. \nEdges are rewired with probability " << p << std::endl;
     Graph g(SWGen(gen, N, k, p), SWGen(), N);
 

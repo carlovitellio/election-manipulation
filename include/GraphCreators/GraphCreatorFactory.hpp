@@ -2,8 +2,9 @@
 #define GRAPHCREATORFACTORY_HPP
 
 #include <string>
-#include "Utilities/Factory.hpp"
-#include "GraphCreatorBase.hpp"
+#include <iostream>
+#include "ExternalUtilities/Factory.hpp"
+#include "GraphCreators/GCTraits.hpp"
 
 namespace ElectionManipulation::GraphCreator{
 

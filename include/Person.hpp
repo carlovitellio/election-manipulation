@@ -35,7 +35,8 @@ namespace ElectionManipulation{
 
     friend std::ostream & operator << (std::ostream &, Person const &);
 
-    friend class PersonCreator;
+    //! Forward declaration
+    template<class RandGen> friend class PersonCreator;
 
     friend class PerformanceEvaluator;
 
@@ -73,7 +74,7 @@ namespace ElectionManipulation{
   boost::dynamic_properties create_dynamicProperties_reading(Graph& g)
   {
     boost::dynamic_properties dp(boost::ignore_other_properties);
-    // dp.property("node_id",               get(boost::vertex_index,g));
+    dp.property("node_id",               get(boost::vertex_index,g));
     dp.property("Name",                  get(&Person::name, g));
     dp.property("Probability of voting", get(&Person::prob_voting_c0, g));
     dp.property("Resistance",            get(&Person::resistance, g));

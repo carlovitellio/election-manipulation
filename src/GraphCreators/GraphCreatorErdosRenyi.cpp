@@ -1,4 +1,4 @@
-#include "GraphCreatorErdosRenyi.hpp"
+#include "GraphCreators/GraphCreatorErdosRenyi.hpp"
 #include <boost/graph/erdos_renyi_generator.hpp>
 
 namespace ElectionManipulation::GraphCreator{

@@ -2,7 +2,7 @@
 #define GRAPHCREATORPLOD_HPP
 
 #include "EMTraits.hpp"
-#include "GraphCreatorBase.hpp"
+#include "GraphCreators/GraphCreatorBase.hpp"
 
 namespace ElectionManipulation::GraphCreator{
 
@@ -24,8 +24,8 @@ namespace ElectionManipulation::GraphCreator{
 
     void set_gen(const RandomGenerator& gen_) override {gen=gen_;}
     void read_params(GetPot) override;
+    bool get_read_attributes() const override {return false;}
 
-    //! a string that identify the general type of Graph Creator
     std::string name() const override {return "PLOD";}
 
   private:
