@@ -7,13 +7,26 @@
 #include "Distributions/DistributionsTraits.hpp"
 #include "Distributions/DistributionFactories.hpp"
 #include "EMUtilities.hpp"
+#include <dlfcn.h>
 #include <filesystem>
+#include <utility>
+#include <boost/lexical_cast.hpp>
 
 namespace ElectionManipulation{
 
   using GraphCreatorBase = GraphCreator::GraphCreatorBase;
   using namespace Distributions;
-
+  //! Helper class for reading the information needed from the command line and the input file
+  /*!
+      In this class many methods are implemented for retrieving information from
+      command line and input file. Some method takes care of returning the proper
+      pointer to the method chosen by the user at run-time and loaded from a factory.
+      For the GraphCreator is used a Factory using the Singleton design pattern
+      as proposed by Prof. Formaggia during his classes at Politecnico di Milano.
+      For the ProbabilityDistribution is used a Factory implemented as a map.
+      @tparam The RandomGenerator class that will be used in the creation of the graph
+      (both the structure and the vertex properties)
+  */
   template<class Generator>
   class ReadInfoGetPot{
   private:
@@ -22,24 +35,48 @@ namespace ElectionManipulation{
     Generator gen;   //!< The RandomGenerator passed to the Creators
   public:
     ReadInfoGetPot(const GetPot& cl_, const Generator& gen_): cl{cl_}, gen{gen_} {}
+
     //! Check whether the user is asking for the help of the executable
     void check_help();
+
     //! Look for the input file where to search every information needed for
     //! the manipulation process
     void read_input_file();
+
     //! Look for the information needed for constructing the GraphCreator requested
+    //! \return a string related to the method to use
+    std::string readInfoGraphCreator();
+
+    //! Read the plugin libraries to be loaded
+    void readPluginLibraries();
+
+    //! Try to instantiate the requested method
     //! \return Returns a unique pointer to the GraphCreator base class
-    std::unique_ptr<GraphCreatorBase> readInfoGraphCreator();
+    std::unique_ptr<GraphCreatorBase> instantiateGraphCreator();
+
     //! Look for the ProbabilityDistribution needed for the generating the
     //! Resistance attribute of the Person in the social network.
     //! \return Returns a unique pointer to the ResistanceDistribution class
     std::unique_ptr<ResistanceDistribution<Generator>> readInfoResistanceDist();
+
     //! Look for the ProbabilityDistribution needed for the generating the
     //! probability of voting of each Person in the social network.
     //! \return Returns a unique pointer to the VotingDistribution class
     std::unique_ptr<VotingDistribution<Generator>> readInfoVotingDist();
 
+    //! Read parameters useful for the influence process
+    //! \return A pair containing the number of steps used in the estimation of
+    //!         the utility of each node and the number of influence rounds
+    std::pair<std::size_t, std::size_t> readInfluenceOption();
+
+    //! Check whether the user wants the results (in term of metrics)
+    //! printed in a file in the out folder
+    bool readInfoOutputResults();
+
+    //! Check whether the user wants the graph printed in a file in the out folder
+    bool readInfoPrintGraph();
   };
+
 
   template<class Generator>
   void ReadInfoGetPot<Generator>::check_help()
@@ -67,11 +104,8 @@ namespace ElectionManipulation{
 
 
   template<class Generator>
-  std::unique_ptr<GraphCreatorBase>
-  ReadInfoGetPot<Generator>::readInfoGraphCreator()
+  std::string ReadInfoGetPot<Generator>::readInfoGraphCreator()
   {
-    std::unique_ptr<GraphCreatorBase> gc_ptr;
-
     using GraphFactory = GraphCreator::GraphCreatorFactory;
     //! Instantiating the Factory collecting the graph creator methods
     const GraphFactory & MyFactory = GraphCreator::MyFactory;
@@ -90,11 +124,50 @@ namespace ElectionManipulation{
       std::exit(0);
     }
 
+    return GCmethod;
+  }
+
+  template<class Generator>
+  void ReadInfoGetPot<Generator>::readPluginLibraries()
+  {
+    auto nlibs = GPfile.vector_variable_size("Graph_option/library");
+    for(std::size_t i=0; i<nlibs; i++){
+      std::string library = GPfile("Graph_option/library", i, "");
+      if(library == "") {
+        std::cerr << "File wrongly parsed. Unable to read the library" << std::endl;
+        std::exit(1);
+      } else {
+        void* plugin_lib = dlopen(library.c_str(), RTLD_NOW);
+        if (plugin_lib == nullptr) {
+          std::cerr << "Unable to find the library " << library << std::endl;
+          std::cerr << dlerror() << std::endl;
+          std::exit(1);
+        }
+      }
+
+    }
+  }
+
+  template<class Generator>
+  std::unique_ptr<GraphCreatorBase>
+  ReadInfoGetPot<Generator>::instantiateGraphCreator()
+  {
+    using GraphFactory = GraphCreator::GraphCreatorFactory;
+    //! Instantiating the Factory collecting the graph creator methods
+    const GraphFactory & MyFactory = GraphCreator::MyFactory;
+
+    std::string GCmethod = readInfoGraphCreator();
+    readPluginLibraries();
+
+    std::unique_ptr<GraphCreatorBase> gc_ptr;
+
     try {
       gc_ptr = MyFactory.create(GCmethod);
       gc_ptr->set_gen(gen);
       gc_ptr->read_params(GPfile);
+      std::clog << "---------------------------------------" << std::endl;
       std::clog << "Implementing the graph with " << GCmethod << " creator" << std::endl;
+      std::clog << "---------------------------------------" << std::endl;
     }
     catch (std::invalid_argument & e)
     {
@@ -108,7 +181,6 @@ namespace ElectionManipulation{
   }
 
 
-
   template<class Generator>
   std::unique_ptr<ResistanceDistribution<Generator>>
   ReadInfoGetPot<Generator>::readInfoResistanceDist()
@@ -118,7 +190,6 @@ namespace ElectionManipulation{
 
     return find_in_factory(gen, GPfile, distr, factory);
   }
-
 
 
   template<class Generator>
@@ -131,6 +202,30 @@ namespace ElectionManipulation{
     return find_in_factory(gen, GPfile, distr, factory);
   }
 
+
+  template<class Generator>
+  std::pair<std::size_t, std::size_t>
+  ReadInfoGetPot<Generator>::readInfluenceOption()
+  {
+    std::size_t steps  = GPfile("InfluenceOption/Estimation/steps", 1);
+    std::size_t rounds = GPfile("InfluenceOption/rounds", 10);
+
+    return std::make_pair(steps, rounds);
+  }
+
+
+  template<class Generator>
+  bool ReadInfoGetPot<Generator>::readInfoOutputResults(){
+    std::string output_results = GPfile("Output/output_results", "1");
+    return boost::lexical_cast<bool>(output_results);
+  }
+
+
+  template<class Generator>
+  bool ReadInfoGetPot<Generator>::readInfoPrintGraph(){
+    std::string print_graph = GPfile("Output/print_graph", "1");
+    return boost::lexical_cast<bool>(print_graph);
+  }
 
 } // end namespace ElectionManipulation
 

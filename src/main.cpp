@@ -1,18 +1,6 @@
 #include <iostream>
-#include <sstream>
-#include <stdexcept>
 #include "ExternalUtilities/GetPot"
-//#include "EMUtilities.hpp"
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsuggest-override"
-#pragma GCC diagnostic ignored "-Wdeprecated-copy"
-#include <boost/graph/graph_utility.hpp> // print_graph
-#include <boost/graph/adjacency_list_io.hpp>
-#include <boost/graph/graphviz.hpp>
-#include <boost/graph/graphml.hpp>
-#pragma GCC diagnostic pop
-
+#include "EMUtilities.hpp"
 #include "EMTraits.hpp"
 #include "GraphCreators/GCTraits.hpp"
 #include "Distributions/DistributionsTraits.hpp"
@@ -30,86 +18,72 @@ int main(int argc, char** argv)
 
   GetPot cl(argc,argv);
 
-  std::random_device rd ;
+  std::random_device rd;
   ElectionManipulation::EMTraits::RandomGenerator gen{rd()};
 
+  //! Helper class used to handle the input parameters
   ReadInfoGetPot reader(cl, gen);
-
+  //! Check whether it is asked the help of the executable
   reader.check_help();
+  //! Look for the file to be read
   reader.read_input_file();
 
 
-  using GCHandler = GraphCreator::GCHandler; // alias to a apsc::PointerWrapper
+  using GCHandler = GraphCreator::GCHandler; // alias to apsc::PointerWrapper<GraphCreatorBase>;
 
-  GCHandler gc_ptr = reader.readInfoGraphCreator();
+  //! The graph type is deduced run-time reading from an input file
+  //! Read from input file which GraphCreator to be used and retrieve it from the factory
+  GCHandler gc_ptr = reader.instantiateGraphCreator();
 
 
   using ResHandler = Distributions::ResDistHandler<RandomGenerator> ;
   using VotHandler = Distributions::VotDistHandler<RandomGenerator> ;
 
+  //! Deduce the probability distributions to be used for generating each Person
+  //! if requested from the chosen GraphCreator
   ResHandler resistance_distr_ptr = reader.readInfoResistanceDist();
   VotHandler voting_distr_ptr = reader.readInfoVotingDist();
-
-
+  //! Class used to generate each Person, if requested from the Chosen GraphCreator
   PersonCreator<RandomGenerator> pc(gen, *resistance_distr_ptr, *voting_distr_ptr);
-
+  //! Class that unifies all the concepts define above and that enables to
+  //! create a proper Social Network
   SocialNetworkCreator<RandomGenerator> snc(*gc_ptr, pc);
 
   Graph my_graph{snc.apply()};
 
-  std::cout << boost::write(my_graph);
+  //! \param steps represents the maximum distance to be used to estimate the
+  //!              utility of a vertex
+  //! \param rounds represents how many times to influence the network
+  auto [steps, rounds] = reader.readInfluenceOption();
 
-  std::ofstream dotfile, xmlfile;
-
-  dotfile.open("out/test.dot");
-  write_graphviz(dotfile, my_graph);
-  dotfile.close();
-
-
-
-
-//  print_graph(my_graph, std::cout);
-
-//  std::cout << boost::write(my_graph);
-
-
-//  std::size_t steps  = GPfile("InfluenceOption/Estimation/steps", 1);
-//  std::size_t rounds = GPfile("InfluenceOption/rounds", 10);
-
+  //! Class where the performance metrics are implemented
   PerformanceEvaluator pe(my_graph);
 
-//  ManipulatorInfluence mi(my_graph, steps);
-/*
-  std::ostringstream tmp;
+  //! Class where the Manipulator defines her methods
+  ManipulatorInfluence mi(my_graph, steps);
 
-  tmp << "out/" << GCmethod << "_N" << num_vertices(my_graph)
-      << "_E" << num_edges(my_graph) << "_lambda" << lambda << ".dat";
-  std::ofstream file (tmp.str());
+  //! Checks if it is requested to output the performance metrics in a file
+  bool output_results = reader.readInfoOutputResults();
 
-  file << 0 << " " << pe.error_estimation_prob(2) << '\n';
-
-  for(std::size_t i{1}; i<=rounds; i++)
-  {
-    mi.influence();
-    file << i << " " << pe.error_estimation_prob(2) << '\n';
+  if(output_results) {
+    std::ofstream file ("../out/results.dat");
+    file << "Round" << " " << "prob_MSE" << '\n';
+    for(std::size_t i=0; i<=rounds; i++)
+    {
+      file << i << " " << pe.error_estimation_prob(2) << '\n';
+      mi.influence();
+    }
+    file.close();
+  } else {
+    for(std::size_t i=0; i<=rounds; i++)
+    {
+      mi.influence();
+    }
   }
 
-  file.close();
-*/
+  //! Checks if it is requested to output the graph in a file
+  if(reader.readInfoPrintGraph()) output_graph(my_graph);
 
-  boost::dynamic_properties dp = create_dynamicProperties(my_graph);
-
-  dotfile.open("out/test_w_property.dot");
-  write_graphviz_dp(dotfile, my_graph, dp);
-  dotfile.close();
-
-  xmlfile.open("out/test_w_property.xml");
-  write_graphml(xmlfile, my_graph, dp);
-  xmlfile.close();
-
-  xmlfile.open("out/test.xml");
-  write_graphml(xmlfile, my_graph, create_dynamicProperties(my_graph, false));
-  xmlfile.close();
 
   return 0;
 

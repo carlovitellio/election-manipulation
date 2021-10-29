@@ -16,6 +16,8 @@ FACTORY_LIB      = $(LIB_DIR)/$(FACTORY_LIBFILE)
 LDLIBS += -L$(LIB_DIR) -l$(FACTORY_LIBNAME)
 LIBLIB  = -L$(LIB_DIR) -l$(FACTORY_LIBNAME)
 
+# link libdl to be able to load dynamic libraries at run-time
+LDLIBS += -ldl
 
 GC_SRC_DIR = $(SRC_DIR)/GraphCreators
 
@@ -37,7 +39,7 @@ BOOST_LIB       = $(LIB_DIR)/$(BOOST_LIBFILE)
 BOOST_LIB_SRCS := $(filter-out $(FACTORY_LIB_SRCS) $(INPUT_LIB_SRCS),$(wildcard $(GC_SRC_DIR)/*.cpp))
 BOOST_LIB_OBJS := $(BOOST_LIB_SRCS:$(GC_SRC_DIR)/%.cpp=$(OBJ_LIB_DIR)/%.o)
 
-LDLIBS += -L$(LIB_DIR) -l$(BOOST_LIBNAME) -l$(INPUT_LIBNAME)
+# LDLIBS += -L$(LIB_DIR) -l$(BOOST_LIBNAME) -l$(INPUT_LIBNAME)
 
 LDFLAGS+=-Wl,-rpath,$(LIB_DIR)
 

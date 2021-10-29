@@ -1,5 +1,13 @@
+[Output]
+# 1 for creating a file containing a graph in the out folder, 0 otherwise
+print_graph = 1
+# 1 for creating a file containing the results of the influece in the out folder,
+# 0 otherwise
+output_results = 1
+
 [Graph_option]
-graph_type = Input-file
+library = '../lib/libBoostCreators.so ../lib/libInputCreator.so'
+graph_type = Small-World
 # Input file where it is stored the graph to manipulate if graph_type is equal to "Input-file"
 Input_graph = ../input/test_w_property.dot
 
@@ -43,7 +51,7 @@ alpha = 1
 beta = 1
 
 [InfluenceOption]
-rounds = 1000
+rounds = 100
 
 [InfluenceOption/Estimation]
 steps = 100
