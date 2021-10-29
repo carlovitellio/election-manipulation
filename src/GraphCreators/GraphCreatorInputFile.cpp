@@ -50,17 +50,9 @@ namespace ElectionManipulation::GraphCreator{
     std::ifstream dot(filename);
     // Constructs an empty graph
     Graph g(0);
-
-    boost::dynamic_properties dp;
-    dp.property("node_id", get(boost::vertex_index,g));
-
-    if(read_attributes)
-    {
-      dp = create_dynamicProperties_reading(g);
-    }
+    boost::dynamic_properties dp{create_dynamicProperties(g, read_attributes)};
 
     read_graphviz(dot, g, dp);
-
     return g;
   }
 
@@ -69,17 +61,11 @@ namespace ElectionManipulation::GraphCreator{
     std::ifstream xml(filename);
     // Construct an empty graph
     Graph g(0);
-
-    boost::dynamic_properties dp;
-    dp.property("node_id", get(boost::vertex_index,g));
-
-    if(read_attributes)
-    {
-      dp = create_dynamicProperties_reading(g);
-    }
+    // boost::read_graphml is not able to cast properly the attributes in the graph
+    read_attributes = false;
+    boost::dynamic_properties dp{create_dynamicProperties(g, read_attributes)};
 
     read_graphml(xml, g, dp);
-
     return g;
   }
 
@@ -91,7 +77,7 @@ namespace ElectionManipulation::GraphCreator{
       std::string excep = "Specify an input graph to be read\n";
       throw std::invalid_argument(excep);
     }
-    std::string read_attrib = GPfile("Graph_option/Input_graph/Read_attributes", "false");
+    std::string read_attrib = GPfile("Graph_option/Input_graph/Read_attributes", "1");
     read_attributes = boost::lexical_cast<bool>(read_attrib);
   }
 

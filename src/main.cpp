@@ -10,6 +10,7 @@
 #include <boost/graph/graph_utility.hpp> // print_graph
 #include <boost/graph/adjacency_list_io.hpp>
 #include <boost/graph/graphviz.hpp>
+#include <boost/graph/graphml.hpp>
 #pragma GCC diagnostic pop
 
 #include "EMTraits.hpp"
@@ -56,12 +57,15 @@ int main(int argc, char** argv)
 
   Graph my_graph{snc.apply()};
 
+  std::cout << boost::write(my_graph);
 
-  std::ofstream dotfile;
+  std::ofstream dotfile, xmlfile;
 
   dotfile.open("out/test.dot");
   write_graphviz(dotfile, my_graph);
   dotfile.close();
+
+
 
 
 //  print_graph(my_graph, std::cout);
@@ -93,12 +97,19 @@ int main(int argc, char** argv)
   file.close();
 */
 
-  boost::dynamic_properties dp = create_dynamicProperties_writing(my_graph);
+  boost::dynamic_properties dp = create_dynamicProperties(my_graph);
 
   dotfile.open("out/test_w_property.dot");
   write_graphviz_dp(dotfile, my_graph, dp);
   dotfile.close();
 
+  xmlfile.open("out/test_w_property.xml");
+  write_graphml(xmlfile, my_graph, dp);
+  xmlfile.close();
+
+  xmlfile.open("out/test.xml");
+  write_graphml(xmlfile, my_graph, create_dynamicProperties(my_graph, false));
+  xmlfile.close();
 
   return 0;
 

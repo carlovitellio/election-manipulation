@@ -20,16 +20,16 @@ namespace ElectionManipulation{
 
   private:
     std::string name;           //!< The name of the person
-    double prob_voting_c0;
+    double prob_voting_c0{0.};
     DefRandEngine engine;
 
   public:
     // Accessible also to the manipulator
-    std::size_t resistance;    //!< The resistance in changing the probability of voting
+    std::size_t resistance{10};    //!< The resistance in changing the probability of voting
     double manipulator_estim_prob{0.5};
-    double manipulator_prob_activ;
-    double manipulator_utility;
-    double manipulator_marginal_utility;
+    double manipulator_prob_activ{0.};
+    double manipulator_utility{0.};
+    double manipulator_marginal_utility{0.};
 
     //! Being the vertex property, it should be default constructable
 
@@ -71,26 +71,30 @@ namespace ElectionManipulation{
   //! Helper function for constructing a dynamic property associated with a graph
   //! It is based on the class Person defined above
   template <class Graph>
-  boost::dynamic_properties create_dynamicProperties_reading(Graph& g)
+  boost::dynamic_properties create_dynamicProperties(Graph& g, bool with_prop=true)
   {
     boost::dynamic_properties dp(boost::ignore_other_properties);
-    dp.property("node_id",               get(boost::vertex_index,g));
-    dp.property("Name",                  get(&Person::name, g));
-    dp.property("Probability of voting", get(&Person::prob_voting_c0, g));
-    dp.property("Resistance",            get(&Person::resistance, g));
-    dp.property("Estimated probability", get(&Person::manipulator_estim_prob, g));
+    dp.property("node_id",               get(&Person::name, g));
+    if(with_prop)
+    {
+      dp.property("Probability_voting", get(&Person::prob_voting_c0, g));
+      dp.property("Resistance",            get(&Person::resistance, g));
+      dp.property("Estimated_probability", get(&Person::manipulator_estim_prob, g));
+    }
 
     return dp;
   }
+/*
 
   template <class Graph>
-  boost::dynamic_properties create_dynamicProperties_writing(Graph& g)
+  boost::dynamic_properties create_dProperties_no_read(Graph& g)
   {
-    boost::dynamic_properties dp{create_dynamicProperties_reading(g)};
-    dp.property("node_id",               get(boost::vertex_index,g));
+    boost::dynamic_properties dp(boost::ignore_other_properties);
+    dp.property("node_id",               get(&Person::name, g));
+
     return dp;
   }
-
+*/
 } // end of namespace ElectionManipulation
 
 #endif // PERSON_HPP

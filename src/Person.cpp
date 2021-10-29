@@ -5,8 +5,8 @@ namespace ElectionManipulation{
   std::ostream & operator << (std::ostream & str, Person const & p)
   {
     str << "Name: " << p.name << ", "
-        << "resistance: " << p.resistance << ", "
-        << "probability of voting c_0: " << p.prob_voting_c0 << ".\n";
+        << "Resistance: " << p.resistance << ", "
+        << "Probability_voting: " << p.prob_voting_c0 << ".\n";
 
     return str;
   }

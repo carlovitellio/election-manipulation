@@ -1,24 +1,10 @@
 # The directory where the Makefile resides
 ROOT=/home/carlo/election-manipulation
 
-## Mpi directories for library and include files
-##
-#MPI_LIBDIR=${mkOpenmpiLib}
-#MPI_INCDIR=${mkOpenmpiInc}
 
-## The location of the multithresing building block library and header files
-## necessary for the parallel version of the algorithms.
-##
-#mkTbbLib?=/usr/lib/x86_64-linux-gnu/
-#mkTbbInc?=/usr/include
-
-
-#
-# The C++ compiler (taken from an environmental variable)
-
+# The C++ compiler
 mkCxxCompiler?=g++
 CXX = ${mkCxxCompiler}
-
 
 LINK.o = $(CXX) $(LDFLAGS) $(TARGET_ARCH)
 
@@ -69,7 +55,7 @@ export DOXYFILE=$(ROOT)/Doxyfile
 mkBoostInc=/usr/local/boost_1_77_0
 BOOST_DIR=$(mkBoostInc)
 
-INCLS  = -I. -I./include -I$(BOOST_DIR)
+INCLS  = -I. -I$(ROOT)/include -I$(BOOST_DIR)
 
 #
 # Set make macros
