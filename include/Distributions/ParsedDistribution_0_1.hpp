@@ -10,7 +10,8 @@ namespace ElectionManipulation::Distributions{
   //! Helper function that emulates the Matlab function
   //! It generates N samples lineary spaced in [a,b]
   template<class RealType=double>
-  std::vector<RealType> linspace(RealType a, RealType b, std::size_t N)
+  std::vector<RealType> linspace(const RealType& a, const RealType& b,
+                                 const std::size_t& N)
   {
     static_assert(std::is_floating_point_v<RealType>,
           "A floating point type is needed in linspace");
@@ -64,6 +65,7 @@ namespace ElectionManipulation::Distributions{
 
     void read_params(GetPot) override;
     //! Method used to find an estimate of the maximum of pdf in [0,1]
+    //! It evaluates the pdf on point in [0,1] evenly spaced
     double find_pdf_maximum();
 
     ResT extract() override;
@@ -106,8 +108,9 @@ namespace ElectionManipulation::Distributions{
   template <class Generator, class ResT>
   double ParsedDistribution_0_1<Generator, ResT>::find_pdf_maximum()
   {
-    auto eval = [&,this](ResT& x){this->my_x = x; x = this->parser.Eval();};
     std::vector<ResT> v = linspace(0., 1., 1001);
+
+    auto eval = [&,this](ResT& x){this->my_x = x; x = this->parser.Eval();};
     std::for_each(v.begin(), v.end(), eval);
 
     return *std::max_element(v.cbegin(), v.cend());
