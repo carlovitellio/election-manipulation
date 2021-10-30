@@ -9,8 +9,6 @@
 #include "Distributions/ProbabilityDistribution.hpp"
 
 namespace ElectionManipulation::Distributions{
-  //! Forward declaration
-//  template<class Generator, class ResultType> class ProbabilityDistribution;
 
   template<class Generator, class ResT>
   using DistributionBuilder = std::function<std::unique_ptr<ProbabilityDistribution<Generator, ResT>>()>;
@@ -26,7 +24,8 @@ namespace ElectionManipulation::Distributions{
   //! unique_ptr wrapper for a ResistanceDistribution
   template<class Generator>
   using ResDistHandler = apsc::PointerWrapper<ResistanceDistribution<Generator>>;
-  //! The factory associated to the resistance attribute of a Person
+  //! @brief The factory associated to the resistance attribute of a Person
+  //! The factory is implemented as a map
   template<class Generator>
   using ResistanceDistFactory = std::map<DistributionID,
                         DistributionBuilder<Generator, UnsignedType>>;
@@ -41,7 +40,8 @@ namespace ElectionManipulation::Distributions{
   //! unique_ptr wrapper for a VotingDistribution
   template<class Generator>
   using VotDistHandler = apsc::PointerWrapper<VotingDistribution<Generator>>;
-  //! The factory associated to the probability of voting attribute of a Person
+  //! @brief The factory associated to the probability of voting attribute of a Person
+  //! The factory is implemented as a map
   template<class Generator>
   using VotingDistFactory = std::map<DistributionID,
                         DistributionBuilder<Generator, RealType>>;

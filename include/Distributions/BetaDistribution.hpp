@@ -7,6 +7,17 @@
 
 namespace ElectionManipulation::Distributions{
 
+  //! @brief Class that encapsulates the Beta distribution
+  /*!
+      This class makes available the Beta Distribution (implemented in the Boost
+      library) with the interface of ProbabilityDistribution.
+      The parameters of the distribution are read via GetPot from a file
+      and new samples can be generated with the extract() method.
+
+      \tparam Generator Random Engine used to have randomness
+      \tparam ResT the result type has to be of floating type since the distribution
+              is on [0,1]
+  */
   template <class Generator, class ResT=double>
   class BetaDistribution final: public ProbabilityDistribution<Generator, ResT>
   {

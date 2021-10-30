@@ -91,13 +91,14 @@ clean:
 
 distclean:
 	$(MAKE) clean
-	$(RM) -f $(DEPEND)
-	$(RM) -r ./doc
-	$(RM) -r $(LIB_DIR)
+	$(RM) -f $(DEPEND) ./index.html
+	$(RM) -r $(LIB_DIR) ./doc
 	$(RM) *.out *.bak *~
 
 doc:
 	doxygen $(DOXYFILE)
+	ln -s doc/html/index.html ./index.html
+
 
 dynamic: CXXFLAGS += -fPIC
 dynamic: $(FACTORY_LIB_OBJS) $(INPUT_LIB_OBJS) $(BOOST_LIB_OBJS)

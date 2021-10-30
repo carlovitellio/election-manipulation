@@ -7,6 +7,17 @@
 
 namespace ElectionManipulation::Distributions{
 
+  //! @brief Class that encapsulates the Poisson distribution
+  /*!
+    This class makes available the Poisson Distribution (implemented in the standard
+    random library) with the interface of ProbabilityDistribution.
+    The parameters of the distribution are read via GetPot from a file
+    and new samples can be generated with the extract() method.
+
+    \tparam Generator Random Engine used as source of randomness
+    \tparam ResT the result type has to be of unsigned type since the distribution
+            is on the natural numbers
+  */
   template <class Generator, class ResT=int>
   class PoissonDistribution final: public ProbabilityDistribution<Generator, ResT>
   {

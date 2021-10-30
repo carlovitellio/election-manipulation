@@ -21,7 +21,6 @@ namespace ElectionManipulation::Distributions{
     return v;
   }
   //! @brief Class for a probability distribution on [0,1]
-  /*! Rejection sampling
   /*! This class enables to read from a .txt file a probability mass function
       on [0,1] and to simulate from it.
 
@@ -64,7 +63,7 @@ namespace ElectionManipulation::Distributions{
     void set_gen(const Generator& gen_) override {gen=gen_;}
 
     void read_params(GetPot) override;
-
+    //! Method used to find an estimate of the maximum of pdf in [0,1]
     double find_pdf_maximum();
 
     ResT extract() override;
@@ -72,9 +71,9 @@ namespace ElectionManipulation::Distributions{
   private:
     Generator gen;        //!< The random engine used to extract new samples from the Distribution
     std::string my_pdf;   //!< The actual string read from the txt file
-    double my_x{0.};
-    mu::Parser parser;
-    double maximum;
+    mu::Parser parser;    //!< The parser provided with the MuParser library
+    double my_x{0.};      //!< The variable attached to the Parser
+    double maximum;       //!< The maximum of pdf that will be used as scaling factor for Rejection sampling
   };
 
   template <class Generator, class ResT>
