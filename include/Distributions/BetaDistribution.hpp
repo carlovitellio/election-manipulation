@@ -2,9 +2,7 @@
 #define BETADISTRIBUTION_HPP
 
 #include "Distributions/ProbabilityDistribution.hpp"
-#include "EMTraits.hpp"
 #include <boost/random/beta_distribution.hpp>
-#include <string>
 #include <stdexcept>
 
 namespace ElectionManipulation::Distributions{

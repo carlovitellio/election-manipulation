@@ -1,5 +1,5 @@
-#ifndef PARSEDDISTRIBUTIONN_HPP
-#define PARSEDDISTRIBUTIONN_HPP
+#ifndef PARSEDDISTRIBUTION_N_HPP
+#define PARSEDDISTRIBUTION_N_HPP
 
 #include "Distributions/ProbabilityDistribution.hpp"
 #include "muParser.h"
@@ -7,6 +7,7 @@
 #include <fstream>
 #include <random>
 #include <boost/math/special_functions/factorials.hpp>
+#include <filesystem>
 
 
 namespace ElectionManipulation::Distributions{
@@ -27,32 +28,34 @@ namespace ElectionManipulation::Distributions{
       write factorial(x) in the txt file). For further information about how it
       is parsed, read the documentation at https://beltoforion.de/en/muparser/
 
-      In order to extract a new sample from the parsed probability mass function
-      a number is randomly extracted in [0,1] and it is compared with the cumulative
-      distribution function. In particular, the [0,1] interval represents the
-      image of the cumulative distribution function. [0,1] is subdivided in
-      intervals according to the cdf's jumps and so the new sample is extracted
-      depending on the interval where it belongs
+      In order to extract a new sample, Inverse transform sampling is used.
+      So, a number is randomly extracted in [0,1] and it is compared with the
+      cumulative distribution function of the parsed probability mass function.
+      In particular, the [0,1] interval represents the image of the cumulative
+      distribution function. [0,1] is subdivided in intervals according to the
+      cdf's jumps and so the new sample is extracted depending on the interval
+      where it belongs.
+
+      @note the parsed distribution has to be a proper Probability Distribution
+            No checks are performed about it, so the user has to be cautious
 
       \tparam Generator Random Engine used to extract a number in [0,1]
       \tparam ResT the result type has to be of unsigned type since the distribution
               is on the natural numbers
   */
   template <class Generator, class ResT=unsigned>
-  class ParsedDistributionN: public ProbabilityDistribution<Generator, ResT>
+  class ParsedDistribution_N final: public ProbabilityDistribution<Generator, ResT>
   {
     static_assert(std::is_unsigned_v<ResT>,
     "An unsigned type has to be the result type of a drawn \
     from a probability distribution on N (set of natural numbers)");
 
   public:
-    ParsedDistributionN()=default;
-
-  //  ~ParsedDistributionN();
+    ParsedDistribution_N()=default;
 
     std::unique_ptr<ProbabilityDistribution<Generator, ResT>> clone() const override
     { return std::unique_ptr<ProbabilityDistribution<Generator, ResT>>
-                                    (new ParsedDistributionN(*this));}
+                                    (new ParsedDistribution_N(*this));}
 
     std::string name() const override {return "Parsed";}
 
@@ -66,7 +69,7 @@ namespace ElectionManipulation::Distributions{
 
   private:
     Generator gen;        //!< The random engine used to extract new samples from [0,1]
-    std::string my_pdf;   //!< The actual string read from the txt file
+    std::string my_pmf;   //!< The actual string read from the txt file
     double my_x{0.};
     mu::Parser parser;
 
@@ -74,18 +77,24 @@ namespace ElectionManipulation::Distributions{
 
 
   template <class Generator, class ResT>
-  void ParsedDistributionN<Generator, ResT>::read_params(GetPot GPfile)
+  void ParsedDistribution_N<Generator, ResT>::read_params(GetPot GPfile)
   {
     std::string filename = GPfile("Person_option/Resistance/filename", "");
+    std::filesystem::path filepath(filename);
+    if (!std::filesystem::exists(filepath))
+    {
+      std::cerr << "Input file " << filename << " does not exists\n";
+      std::exit(1);
+    }
     std::ifstream file(filename);
-    std::getline(file, my_pdf);
+    std::getline(file, my_pmf);
     file.close();
 
     try
   	{
       parser.DefineVar("x", &my_x);
       parser.DefineFun("factorial", my_factorial);
-      parser.SetExpr(my_pdf);
+      parser.SetExpr(my_pmf);
   	}
   	catch (mu::Parser::exception_type &e)
   	{
@@ -95,7 +104,7 @@ namespace ElectionManipulation::Distributions{
   }
 
   template <class Generator, class ResT>
-  double ParsedDistributionN<Generator, ResT>::cdf(ResT x)
+  double ParsedDistribution_N<Generator, ResT>::cdf(ResT x)
   {
     double sum{0.};
     for(ResT i=0; i<=x; i++)
@@ -107,7 +116,7 @@ namespace ElectionManipulation::Distributions{
   }
 
   template <class Generator, class ResT>
-  ResT ParsedDistributionN<Generator, ResT>::extract()
+  ResT ParsedDistribution_N<Generator, ResT>::extract()
   {
     std::uniform_real_distribution<double> unif_distribution(0.0,1.0);
     double goal_cdf = unif_distribution(gen);
@@ -125,4 +134,4 @@ namespace ElectionManipulation::Distributions{
 } // end of namespace ElectionManipulation::Distributions
 
 
-#endif // PARSEDDISTRIBUTIONN_HPP
+#endif // PARSEDDISTRIBUTION_N_HPP

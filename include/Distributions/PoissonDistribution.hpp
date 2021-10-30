@@ -2,9 +2,7 @@
 #define POISSONDISTRIBUTION_HPP
 
 #include "Distributions/ProbabilityDistribution.hpp"
-#include "EMTraits.hpp"
 #include <random>
-#include <string>
 #include <stdexcept>
 
 namespace ElectionManipulation::Distributions{

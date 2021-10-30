@@ -4,29 +4,21 @@
 #include "Distributions/DistributionsTraits.hpp"
 #include "Distributions/BetaDistribution.hpp"
 #include "Distributions/PoissonDistribution.hpp"
-#include "Distributions/ParsedDistributionN.hpp"
+#include "Distributions/ParsedDistribution_N.hpp"
+#include "Distributions/ParsedDistribution_0_1.hpp"
 
 namespace ElectionManipulation::Distributions{
-/*
-  template<class Generator>
-  void loadResistanceFactory(ResistanceDistFactory<Generator>& f){
-    f["Poisson"]=[](){return std::make_unique<PoissonDistribution<Generator, UnsignedType>>();};
-  }
 
-  template<class Generator>
-  void loadVotingFactory(VotingDistFactory<Generator>& f){
-    f["Beta"]=[](){return std::make_unique<BetaDistribution<Generator,RealType>>();};
-  }
-*/
   template<class Generator>
   void loadFactory(ResistanceDistFactory<Generator>& f){
     f["Poisson"]=[](){return std::make_unique<PoissonDistribution<Generator, UnsignedType>>();};
-    f["Parsed"]=[](){return std::make_unique<ParsedDistributionN<Generator, UnsignedType>>();};
+    f["Parsed"]=[](){return std::make_unique<ParsedDistribution_N<Generator, UnsignedType>>();};
   }
 
   template<class Generator>
   void loadFactory(VotingDistFactory<Generator>& f){
     f["Beta"]=[](){return std::make_unique<BetaDistribution<Generator,RealType>>();};
+    f["Parsed"]=[](){return std::make_unique<ParsedDistribution_0_1<Generator,RealType>>();};
   }
 
   template <class Generator, class Factory>

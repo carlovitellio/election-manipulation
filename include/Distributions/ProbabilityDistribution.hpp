@@ -1,9 +1,7 @@
 #ifndef PROBABILITYDISTRIBUTIONS_HPP
 #define PROBABILITYDISTRIBUTIONS_HPP
 
-#include "EMTraits.hpp"
 #include <memory>
-//#include <functional>
 #include <string>
 #include "ExternalUtilities/GetPot"
 
