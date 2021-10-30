@@ -1,0 +1,1 @@
+4^x*_e^(-4)/factorial(x)

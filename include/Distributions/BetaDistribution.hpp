@@ -1,7 +1,7 @@
 #ifndef BETADISTRIBUTION_HPP
 #define BETADISTRIBUTION_HPP
 
-#include "ProbabilityDistribution.hpp"
+#include "Distributions/ProbabilityDistribution.hpp"
 #include "EMTraits.hpp"
 #include <boost/random/beta_distribution.hpp>
 #include <string>
@@ -10,7 +10,7 @@
 namespace ElectionManipulation::Distributions{
 
   template <class Generator, class ResT=double>
-  class BetaDistribution: public ProbabilityDistribution<Generator, ResT>
+  class BetaDistribution final: public ProbabilityDistribution<Generator, ResT>
   {
     static_assert(std::is_floating_point_v<ResT>,
           "A floating point type has to be the result type of a drawn from a Beta distribution");

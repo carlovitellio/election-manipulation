@@ -1,6 +1,10 @@
 # The directory where the Makefile resides
 ROOT=/home/carlo/election-manipulation
 
+MUPARSER_INC_DIR = /home/carlo/pacs-examples/Examples/include
+
+MUPARSER_LIB_DIR = /home/carlo/pacs-examples/Examples/lib
+LDLIBS += -L$(MUPARSER_LIB_DIR) -lmuparser
 
 # The C++ compiler
 mkCxxCompiler?=g++
@@ -38,9 +42,11 @@ endif
 
 ifeq ($(DEBUG),yes)
   OPTFLAGS=-O0 -g
+  LDFLAGS=-Wl,-rpath=$(MUPARSER_LIB_DIR)
 else
   OPTFLAGS=-O3 -funroll-loops
   DEFINES+=-DNDEBUG
+  LDFLAGS=-Wl,-rpath=$(MUPARSER_LIB_DIR)
 endif
 
 
@@ -55,7 +61,7 @@ export DOXYFILE=$(ROOT)/Doxyfile
 mkBoostInc=/usr/local/boost_1_77_0
 BOOST_DIR=$(mkBoostInc)
 
-INCLS  = -I. -I$(ROOT)/include -I$(BOOST_DIR)
+INCLS  = -I. -I$(ROOT)/include -I$(BOOST_DIR) -I$(MUPARSER_INC_DIR)
 
 #
 # Set make macros

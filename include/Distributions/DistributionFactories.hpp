@@ -4,6 +4,7 @@
 #include "Distributions/DistributionsTraits.hpp"
 #include "Distributions/BetaDistribution.hpp"
 #include "Distributions/PoissonDistribution.hpp"
+#include "Distributions/ParsedDistributionN.hpp"
 
 namespace ElectionManipulation::Distributions{
 /*
@@ -20,6 +21,7 @@ namespace ElectionManipulation::Distributions{
   template<class Generator>
   void loadFactory(ResistanceDistFactory<Generator>& f){
     f["Poisson"]=[](){return std::make_unique<PoissonDistribution<Generator, UnsignedType>>();};
+    f["Parsed"]=[](){return std::make_unique<ParsedDistributionN<Generator, UnsignedType>>();};
   }
 
   template<class Generator>

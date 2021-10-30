@@ -1,7 +1,7 @@
 #ifndef POISSONDISTRIBUTION_HPP
 #define POISSONDISTRIBUTION_HPP
 
-#include "ProbabilityDistribution.hpp"
+#include "Distributions/ProbabilityDistribution.hpp"
 #include "EMTraits.hpp"
 #include <random>
 #include <string>
@@ -10,7 +10,7 @@
 namespace ElectionManipulation::Distributions{
 
   template <class Generator, class ResT=int>
-  class PoissonDistribution: public ProbabilityDistribution<Generator, ResT>
+  class PoissonDistribution final: public ProbabilityDistribution<Generator, ResT>
   {
     static_assert(std::is_unsigned_v<ResT>,
           "An unsigned type has to be the result type of a drawn from a Poisson distribution");

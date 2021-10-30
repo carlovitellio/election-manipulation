@@ -38,13 +38,15 @@ alpha = 2.72
 beta = 1000
 
 [Person_option/Resistance]
-distribution = Poisson
+distribution = Parsed
+filename = ../input/resistanceDistrib.txt
 
 [Person_option/Resistance/poisson]
 lambda = 50
 
 [Person_option/ProbabilityVoting]
 distribution = Beta
+filename = ../input/VotingDistrib.txt
 
 [Person_option/ProbabilityVoting/beta]
 alpha = 1
