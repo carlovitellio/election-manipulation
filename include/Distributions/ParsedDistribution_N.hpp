@@ -53,6 +53,10 @@ namespace ElectionManipulation::Distributions{
   public:
     ParsedDistribution_N()=default;
 
+    ~ParsedDistribution_N() {parser.ClearVar();}
+
+    ParsedDistribution_N(const ParsedDistribution_N& rhs);
+
     std::unique_ptr<ProbabilityDistribution<Generator, ResT>> clone() const override
     { return std::unique_ptr<ProbabilityDistribution<Generator, ResT>>
                                     (new ParsedDistribution_N(*this));}
@@ -64,8 +68,6 @@ namespace ElectionManipulation::Distributions{
     void read_params(GetPot) override;
 
     ResT extract() override;
-    //! Helper function for computing the cumulative density function till x
-    double cdf(ResT x);
 
   private:
     Generator gen;        //!< The random engine used to extract new samples from [0,1]
@@ -73,7 +75,21 @@ namespace ElectionManipulation::Distributions{
     double my_x{0.};
     mu::Parser parser;
 
+    //! Helper function for computing the cumulative density function till x
+    double cdf(ResT x);
+
   };
+
+
+  template <class Generator, class ResT>
+  ParsedDistribution_N<Generator, ResT>::ParsedDistribution_N
+                    (const ParsedDistribution_N<Generator, ResT>& rhs):
+    gen{rhs.gen}, my_pmf{rhs.my_pmf}, my_x{rhs.my_x}, parser()
+  {
+    parser.DefineVar("x", &my_x);
+    parser.DefineFun("factorial", my_factorial);
+    parser.SetExpr(my_pmf);
+  }
 
 
   template <class Generator, class ResT>

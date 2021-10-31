@@ -42,7 +42,7 @@ namespace ElectionManipulation{
     //! the social network (contained in <boost/graph/adjacency_list_io.hpp>)
     friend std::ostream & operator << (std::ostream &, Person const &);
     //! Forward declaration of the friend class used to generate the Person's attributes
-    template<class RandGen> friend class PersonCreator;
+    template<class Generator> friend class PersonCreator;
     //! Forward declaration of the friend class used evaluate the influence process
     friend class PerformanceEvaluator;
 

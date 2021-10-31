@@ -56,6 +56,12 @@ namespace ElectionManipulation::Distributions{
 
   public:
 
+    ParsedDistribution_0_1()=default;
+
+    ~ParsedDistribution_0_1() {parser.ClearVar();}
+
+    ParsedDistribution_0_1(const ParsedDistribution_0_1& rhs);
+
     std::unique_ptr<ProbabilityDistribution<Generator, ResT>> clone() const override
     { return std::unique_ptr<ProbabilityDistribution<Generator, ResT>>(new ParsedDistribution_0_1(*this));}
 
@@ -64,9 +70,6 @@ namespace ElectionManipulation::Distributions{
     void set_gen(const Generator& gen_) override {gen=gen_;}
 
     void read_params(GetPot) override;
-    //! Method used to find an estimate of the maximum of pdf in [0,1]
-    //! It evaluates the pdf on point in [0,1] evenly spaced
-    double find_pdf_maximum();
 
     ResT extract() override;
 
@@ -76,7 +79,20 @@ namespace ElectionManipulation::Distributions{
     mu::Parser parser;    //!< The parser provided with the MuParser library
     double my_x{0.};      //!< The variable attached to the Parser
     double maximum;       //!< The maximum of pdf that will be used as scaling factor for Rejection sampling
+
+    //! Method used to find an estimate of the maximum of pdf in [0,1]
+    //! It evaluates the pdf on point in [0,1] evenly spaced
+    double find_pdf_maximum();
   };
+
+  template <class Generator, class ResT>
+  ParsedDistribution_0_1<Generator, ResT>::ParsedDistribution_0_1
+                    (const ParsedDistribution_0_1<Generator, ResT>& rhs):
+    gen{rhs.gen}, my_pdf{rhs.my_pdf}, parser(), my_x{rhs.my_x}, maximum{rhs.maximum}
+  {
+    parser.DefineVar("x", &my_x);
+    parser.SetExpr(my_pdf);
+  }
 
   template <class Generator, class ResT>
   void ParsedDistribution_0_1<Generator, ResT>::read_params(GetPot GPfile)
@@ -134,8 +150,9 @@ namespace ElectionManipulation::Distributions{
       my_y = maximum * unif_distribution(gen);
       //! If the sampled value is less (or equal) than the value of the desidered
       //! distribution at this vertical line, accept the sampled point
-      if(my_y <= parser.Eval()) // if true the sample is accepted
+      if(my_y <= parser.Eval()){ // if true the sample is accepted
         return my_x;
+      }
     }
 
   }
