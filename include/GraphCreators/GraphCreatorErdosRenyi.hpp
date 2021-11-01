@@ -10,6 +10,7 @@ namespace ElectionManipulation::GraphCreator{
   /*!
       It exploits the erdos_renyi_generator implemented in the Boost Graph Library
       within the common interface of GraphCreatorBase.
+
       A Erdös-Rényi graph is a random graph chosen uniformly at random from the
       collection of all graphs with N vertices and E edges.
       Erdös-Renyi graphs typically exhibit very little structure.

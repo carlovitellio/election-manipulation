@@ -5,6 +5,30 @@
 
 namespace ElectionManipulation{
 
+  //! Class to influence the Social Network
+  /*!
+      The class encapsulates a reference to the social newtork and it tries to
+      manipulate it.
+
+      The manipulator assigns an utility to each vertex and initiate an
+      information cascade for conditioning the network. The utility represents
+      the expected change in number of votes.
+
+      In particular, the vertex chosen as seed accepts the message received and
+      updates her probability of voting accordingly. Then, she sends the same
+      message to her neighbourhood. If a neighour accepts the message, she will
+      continue the information cascade. A node cannot be influenced twice by the
+      same message. The process stops when either no node accepts the message or
+      every node has already been reached.
+
+      The constructor requests the graph to be manipulated and the number of
+      steps to be used in order to evaluate the utility of a single vertex. It
+      represents the maximum distance that will be reached in order to estimate
+      the possible advantage influencing that node.
+
+      Whether or not a user accepts a message, the manipulator improves her
+      estimate on the probability of voting of that node.
+  */
   class ManipulatorInfluence{
 
   public:
@@ -25,25 +49,32 @@ namespace ElectionManipulation{
 
     /*!
       This function iterates through all nodes of the graph and call the
-      compute_utility method on each of them and pick the best
+      compute_utility method on each of them and pick the one with maximum utility
     */
     Vertex max_utility_vertex();
 
     /*!
-
+      Function to influence the social network
     */
     void influence();
 
     /*!
-
+      The manipulator updates her estimate on the probability of voting of
+      each Person reached in the information cascade.
+      If the message his accepted,
+      \f[
+      \hat{prob}_{t+1} = \min{(1, \frac{\hat{prob}_{t} * resistance + 2}{resistance + 1})}
+      \f]
+      If the message is refused,
+      \f[
+      \hat{prob}_{t+1} = \max{(0, \frac{\hat{prob}_{t} * resistance - 1}{resistance + 1})}
+      \f]
     */
     void update_estimated_prob(Vertex v, bool accepted);
 
   private:
-    Graph& my_graph;
-    //! Only vertices at distance lower or equal to this parameter
-    //! will be considered for computing the utility of each vertex
-    std::size_t steps;
+    Graph& my_graph;   //!< The actual social network to influence
+    std::size_t steps; //!< Only vertices at distance lower or equal to this parameter will be considered for computing the utility of each vertex
   };
 
 } // end namespace ElectionManipulation

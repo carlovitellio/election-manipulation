@@ -12,14 +12,17 @@ namespace ElectionManipulation{
   using Person = ElectionManipulation::Person;
 
   namespace EMTraits{
+    //! The real type used in the following implementation
     using RealType = double;
+    //! The unsigned type used in the following implementation
     using UnsignedType  = unsigned int;
-
+    //! The Generator used as source of randomness
     using RandomGenerator = std::knuth_b;
 
     static_assert(std::is_default_constructible_v<ElectionManipulation::Person>,
                       "The Boost Graph Library requires default-constructible vertex properties");
 
+    //! The Graph type implementation requested
     using Graph = boost::adjacency_list<boost::vecS, boost::vecS,
                                         boost::undirectedS, Person>;
   } // end namespace ElectionManipulation::EMTraits

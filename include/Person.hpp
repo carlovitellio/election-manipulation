@@ -28,7 +28,7 @@ namespace ElectionManipulation{
   private:
     std::string name;           //!< The name of the person
     double prob_voting_c0{0.};  //!< Probability of voting for the candidate analyzed
-    DefRandEngine engine;       //!< Source of randomness during casting a ballot
+    mutable DefRandEngine engine;       //!< Source of randomness during casting a ballot
 
   public:
     // Accessible also to the manipulator
@@ -50,7 +50,7 @@ namespace ElectionManipulation{
     //! A sample from a Bernoulli distribution with parameter equal to
     //! prob_voting_c0 is sampled
     //! \return true if she votes for the candidate in consideration, false otherwise
-    bool cast_a_ballot();
+    bool cast_a_ballot() const;
 
     //! @brief The Person receives a message and decides whether accepting it or not
     //! She accepts the message with the same probability she casts a ballot for the candidate in consideration.

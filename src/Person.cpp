@@ -12,7 +12,7 @@ namespace ElectionManipulation{
   }
 
   //! The Person casts a ballot according to her probability of voting
-  bool Person::cast_a_ballot()
+  bool Person::cast_a_ballot() const
   {
     std::bernoulli_distribution d(prob_voting_c0);
     return d(engine);

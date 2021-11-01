@@ -15,10 +15,13 @@ namespace ElectionManipulation::GraphCreator{
   /*!
       The class enables to read a graph from a file within the interface of
       GraphCreatorBase.
+
       It is possible to read both graphviz and graphml formats, thanks to the
       methods available in BGL.
+
       In contrast with other GraphCreators, this class doesn't need a generator
       since nothing is randomly generated.
+
       @note To use this class, you will need to build and link against the
             "boost_graph" and "boost_regex" libraries. For more information,
             please refer to https://www.boost.org/doc/libs/1_77_0/more/getting_started/index.html#Build_Install

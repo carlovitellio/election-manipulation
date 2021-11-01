@@ -13,9 +13,11 @@ namespace ElectionManipulation::GraphCreator{
       The algorithm used to generate the Graph is thee Power Law Out Degree (PLOD)
       algorithm [C. Palmer and J. Steffan, Generating Network Topologies That
       Obey Power Laws, 2000].
+
       A scale-free graph typically has a very skewed degree distribution, where
       few vertices have a very high degree and a large number of vertices have a
       very small degree.
+
       The Power Law Out Degree (PLOD) algorithm generates a graph with N vertices
       by allocating a certain number of degree "credits" to each vertex, drawn
       from a power-law distribution.
@@ -28,6 +30,7 @@ namespace ElectionManipulation::GraphCreator{
       \f$ \beta \f$ increases the average degree of vertices.
       \f$ \alpha \f$ controls how steeply the curve drops off, with larger values
       indicating a steeper curve.
+
       Self-loops are not allowed within this implementation.
   */
   class GraphCreatorPLOD final: public GraphCreatorBase

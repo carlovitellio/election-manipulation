@@ -21,9 +21,12 @@ namespace ElectionManipulation{
       In this class many methods are implemented for retrieving information from
       command line and input file. Some method takes care of returning the proper
       pointer to the method chosen by the user at run-time and loaded from a factory.
+
       For the GraphCreator is used a Factory using the Singleton design pattern
       as proposed by Prof. Formaggia during his classes at Politecnico di Milano.
+
       For the ProbabilityDistribution is used a Factory implemented as a map.
+
       @tparam The RandomGenerator class that will be used in the creation of the graph
       (both the structure and the vertex properties)
   */

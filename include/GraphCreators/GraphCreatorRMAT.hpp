@@ -10,8 +10,10 @@ namespace ElectionManipulation::GraphCreator{
   /*!
       It exploits the rmat_graph_generator implemented in the Boost Graph Library
       within the common interface of GraphCreatorBase.
+
       An R-MAT graph has a scale-free distribution w.r.t. vertex degree and is
       implemented using Recursive-MATrix partitioning.
+
       A R-MAT graph has N vertices and E edges.
       a, b, c, and d represent the probability that a generated edge is placed
       of each of the 4 quadrants of the partitioned adjacency matrix.

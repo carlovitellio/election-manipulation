@@ -10,6 +10,7 @@ namespace ElectionManipulation::GraphCreator{
   /*!
       It exploits the small_world_generator implemented in the Boost Graph Library
       within the common interface of GraphCreatorBase.
+
       A small-world graph consists of a ring graph (i.e. each vertex is connected
       to its k nearest neighbours). Edges in the graph are randomly rewired to
       different vertices with a probability p.

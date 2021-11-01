@@ -2,7 +2,6 @@
 #define EMUTILITIES_HPP
 
 #include <iostream>
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsuggest-override"
 #pragma GCC diagnostic ignored "-Wdeprecated-copy"
@@ -11,8 +10,15 @@
 
 namespace ElectionManipulation{
 
-  //! Helper function to print the instructions for the use
+  //! Helper function to print the instructions for the use of the executable
   void printHelp(){
+    std::cout << "----- Program for Election Manipulation -----" << '\n';
+    std::cout << "----- Line options -----" << '\n';
+    std::cout << "[-h --help] Print this help" << '\n';
+    std::cout << "[-l --list] Print the list of available graph creators" << '\n';
+    std::cout << "[InputFile] A string pointing to the file that contains the \
+                input file to be read (default=../input/graph_input.getpot)" << '\n';
+    std::cout << "For further information, please refers to the REAMDE files available" << std::endl;
 
   }
 
@@ -33,6 +39,7 @@ namespace ElectionManipulation{
     }
   }
 
+  //! Helper function to print a graph in an output file (graphviz format used)
   template<class Graph> void output_graph(Graph& my_graph)
   {
     boost::dynamic_properties dp = create_dynamicProperties(my_graph);

@@ -7,7 +7,7 @@
 
 namespace ElectionManipulation::Distributions{
 
-  //! @brief The basis class for Probability Distributions
+  //! @brief The basis class for a Probability Distribution
   /*!
       This pure virtual class offers a common interface for implementing a
       Probability Distribution.
