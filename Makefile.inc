@@ -1,9 +1,12 @@
 # The directory where the Makefile resides
 ROOT=/home/carlo/election-manipulation
 
-MUPARSER_INC_DIR = /home/carlo/pacs-examples/Examples/include
+# Where the Boost library resides
+mkBoostInc=/usr/local/boost_1_77_0
 
+MUPARSER_INC_DIR = /home/carlo/pacs-examples/Examples/include
 MUPARSER_LIB_DIR = /home/carlo/pacs-examples/Examples/lib
+
 LDLIBS += -L$(MUPARSER_LIB_DIR) -lmuparser
 
 # The C++ compiler
@@ -25,7 +28,6 @@ DEFINES=
 # -Weffc++ Wanrs about violation of the coding style in Scott Mayer's Effective C++
 
 WARNFLAGS=-Wall -Wextra -Wsuggest-override -Wnon-virtual-dtor
-
 
 # Optimization flags : May be selected by using the variable RELEASE
 #
@@ -57,30 +59,16 @@ export CXX
 
 export DOXYFILE=$(ROOT)/Doxyfile
 
-# Where the Boost library resides
-mkBoostInc=/usr/local/boost_1_77_0
 BOOST_DIR=$(mkBoostInc)
 
 INCLS  = -I. -I$(ROOT)/include -I$(BOOST_DIR) -I$(MUPARSER_INC_DIR)
 
-#
-# Set make macros
-#
 export CPPFLAGS=$(INCLS) $(DEFINES) $(VERBOSITY)
 export CXXFLAGS=$(OPTFLAGS) $(STDFLAGS) $(WARNFLAGS)
-#
-# For C Programs
-#
+
 export CCFLAGS=$(CXXFLAGS)
-#
-# name of file with dependencies
-#
-#header files
+
 export LDFLAGS+=$(OPTFLAGS)
-#export LDLIBS=$(LIBRARIES)
 export DEPEND=make.dep
-# to avoid nasty warnings
+
 export ARFLAGS=rsU
-# Rule to generate pdf from latex files
-%.pdf:%.tex
-	pdflatex $<

@@ -1,4 +1,4 @@
-*Copyrights*
+## *Copyrights*
 
 The header CloningUtilities.hpp and Factory.hpp have been implemented by
 Prof. Luca Formaggia from Politecnico di Milano and proposed as examples during
