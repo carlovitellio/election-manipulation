@@ -10,7 +10,6 @@
 #include "ManipulatorInfluence.hpp"
 #include "PerformanceEvaluator.hpp"
 
-
 int main(int argc, char** argv)
 {
   using namespace ElectionManipulation;
@@ -28,6 +27,9 @@ int main(int argc, char** argv)
   //! Look for the file to be read
   reader.read_input_file();
 
+  // ---------------------------------------------------
+  // ------------- SOCIAL NETWORK CREATION -------------
+  // ---------------------------------------------------
 
   using GCHandler = GraphCreator::GCHandler; // alias to apsc::PointerWrapper<GraphCreatorBase>;
 
@@ -43,13 +45,18 @@ int main(int argc, char** argv)
   //! if requested from the chosen GraphCreator
   ResHandler resistance_distr_ptr = reader.readInfoResistanceDist();
   VotHandler voting_distr_ptr = reader.readInfoVotingDist();
-  //! Class used to generate each Person, if requested from the Chosen GraphCreator
-  PersonCreator<RandomGenerator> pc(gen, *resistance_distr_ptr, *voting_distr_ptr);
-  //! Class that unifies all the concepts define above and that enables to
+  //! Class used to generate each Person, if requested from the chosen GraphCreator
+  PersonCreator<RandomGenerator> pc(gen, resistance_distr_ptr, voting_distr_ptr);
+  //! Class that unifies all the concepts defined above and that enables to
   //! create a proper Social Network
-  SocialNetworkCreator<RandomGenerator> snc(*gc_ptr, pc);
+  SocialNetworkCreator<RandomGenerator> snc(gc_ptr, pc);
 
   Graph my_graph{snc.apply()};
+
+
+  // -------------------------------------------------
+  // ------------- ELECTION MANIPULATION -------------
+  // -------------------------------------------------
 
   //! \param steps represents the maximum distance to be used to estimate the
   //!              utility of a vertex
@@ -67,10 +74,11 @@ int main(int argc, char** argv)
 
   if(output_results) {
     std::ofstream file ("../out/results.dat");
-    file << "Round" << " " << "prob_MSE" << '\n';
+    file << "Round  prob_MSE  expected_votes" << '\n';
     for(std::size_t i=0; i<=rounds; i++)
     {
-      file << i << " " << pe.error_estimation_prob(2) << '\n';
+      pe.compute();
+      file << i << " " << pe.metrics() << '\n';
       mi.influence();
     }
     file.close();

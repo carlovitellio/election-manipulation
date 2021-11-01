@@ -14,8 +14,12 @@ namespace ElectionManipulation{
   namespace EMTraits{
     //! The real type used in the following implementation
     using RealType = double;
+    static_assert(std::is_floating_point_v<RealType>,
+          "A floating point type is requested");
     //! The unsigned type used in the following implementation
     using UnsignedType  = unsigned int;
+    static_assert(std::is_unsigned_v<UnsignedType>,
+          "An unsigned type is requested");
     //! The Generator used as source of randomness
     using RandomGenerator = std::knuth_b;
 
