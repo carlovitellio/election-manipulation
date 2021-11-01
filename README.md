@@ -45,7 +45,7 @@ After having modified the variables listed above in the Makefile.inc file, it is
 ## Executable instructions
 After having made the executable, it may be asked its help via *./main -h*
 
-### Installing Boost on Unix variants
+## Installing Boost on Unix variants
 This is not intended to replace the [Boost Documentation](https://www.boost.org/doc/libs/1_77_0/more/getting_started/index.html), but it simply tries to help the user.
 
 1. download the library from [link](https://www.boost.org/users/history/version_1_77_0.html)
