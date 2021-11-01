@@ -56,4 +56,4 @@ beta = 1
 rounds = 100
 
 [InfluenceOption/Estimation]
-steps = 100
+steps = 2

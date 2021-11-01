@@ -16,8 +16,7 @@ namespace ElectionManipulation{
     std::cout << "----- Line options -----" << '\n';
     std::cout << "[-h --help] Print this help" << '\n';
     std::cout << "[-l --list] Print the list of available graph creators" << '\n';
-    std::cout << "[InputFile] A string pointing to the file that contains the \
-                input file to be read (default=../input/graph_input.getpot)" << '\n';
+    std::cout << "[InputFile] A string pointing to the file that contains the input file to be read (default=../input/graph_input.getpot)" << '\n';
     std::cout << "For further information, please refers to the REAMDE files available" << std::endl;
 
   }
