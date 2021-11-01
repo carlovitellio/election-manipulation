@@ -24,18 +24,22 @@ namespace ElectionManipulation::GraphCreator{
   {
     std::filesystem::path filepath(filename);
     if (!std::filesystem::exists(filepath))
-      {
-        std::cerr << "Input file " << filename << " does not exists\n";
-        std::exit(1);
-      }
+    {
+      std::cerr << "Input file " << filename << " does not exists\n";
+      std::exit(1);
+    }
 
+    //! The graph format is determined relying on the input's file extension
     std::string extension = filename.substr(filename.find_last_of(".") + 1);
 
     std::clog << "Reading the graph stored in " << filename << std::endl;
 
+    //! .dot and .gv files are recognized as graphviz format files
     if((extension == "dot") || (extension == "gv")) {
       return create(InputFileType<GRAPHVIZ>());
-    } else if((extension == "graphml") || (extension == "xml")) {
+    }
+    //! .graphml and .xml files are recognized as graphvml format files
+    else if((extension == "graphml") || (extension == "xml")) {
       return create(InputFileType<GRAPHML>());
     } else {
       std::string excep = "Input file must be stored in file with one of the \
@@ -61,7 +65,7 @@ namespace ElectionManipulation::GraphCreator{
     std::ifstream xml(filename);
     // Construct an empty graph
     Graph g(0);
-    // boost::read_graphml is not able to cast properly the attributes in the graph
+    //! boost::read_graphml is not able to cast properly the attributes in the graph
     read_attributes = false;
     boost::dynamic_properties dp{create_dynamicProperties(g, read_attributes)};
 

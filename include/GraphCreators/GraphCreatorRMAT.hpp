@@ -6,17 +6,24 @@
 
 namespace ElectionManipulation::GraphCreator{
 
-  //! Makes available the RMAT graph generator provided by BGL
+  //! Class for generating a R-MAT graph
   /*!
-
+      It exploits the rmat_graph_generator implemented in the Boost Graph Library
+      within the common interface of GraphCreatorBase.
+      An R-MAT graph has a scale-free distribution w.r.t. vertex degree and is
+      implemented using Recursive-MATrix partitioning.
+      A R-MAT graph has N vertices and E edges.
+      a, b, c, and d represent the probability that a generated edge is placed
+      of each of the 4 quadrants of the partitioned adjacency matrix.
+      The parameters are from a GetPot file and eventually their consistency is
+      checked.
   */
-
   class GraphCreatorRMAT final: public GraphCreatorBase
   {
   public:
-
+    //! The class is default constructable
     GraphCreatorRMAT()=default;
-
+    //! Another constructor is provided especially for test purposes
     GraphCreatorRMAT(RandomGenerator& gen_, Graph::vertices_size_type N_,
                      Graph::edges_size_type E_,
                      double a_, double b_, double c_, double d_):
@@ -25,15 +32,17 @@ namespace ElectionManipulation::GraphCreator{
 
     std::unique_ptr<GraphCreatorBase> clone() const override;
 
-    Graph create() override;
-
+    std::string name() const override {return "R-MAT";}
+    //! Method to set the Random Generator (source of randomness for creating the graph)
     void set_gen(const RandomGenerator& gen_) override {gen=gen_;}
-    void read_params(GetPot GPFile) override;
-    bool get_read_attributes() const override {return false;}
 
+    void read_params(GetPot GPFile) override;
+    //! Within this GraphCreator the Graph is not read from a file and so neither each vertex attributes are read
+    bool get_read_attributes() const override {return false;}
+    //! In a R-MAT graph the parameters a, b, c and d have to satisfy some condition
     void check_params_consistency();
 
-    std::string name() const override {return "R-MAT";}
+    Graph create() override;
 
   private:
     RandomGenerator gen;

@@ -10,6 +10,7 @@ namespace ElectionManipulation::GraphCreator{
 
   void GraphCreatorRMAT::check_params_consistency()
   {
+    //! a,b,c,d should be in [0,1] and they have to sum up to 1
     if ( (a<0) || (a>1) || (b<0) || (b>1) ||
          (c<0) || (c>1) || (d<0) || (d>1) ||
          (fabs(a+b+c+d) - 1. > std::numeric_limits<double>::epsilon()))
@@ -20,7 +21,8 @@ namespace ElectionManipulation::GraphCreator{
       throw std::invalid_argument(excep);
     }
     typedef typename Graph::directed_category Cat;
-    if(boost::detail::is_directed(Cat()) && (b!=c))
+    //! In a undirected graph b should be equal to c
+    if(!boost::detail::is_directed(Cat()) && (b!=c))
     {
       std::string excep = "Wrong input parameters for a G-MAT graph\n \
                           b,c should be equal in undirected graphs\n";

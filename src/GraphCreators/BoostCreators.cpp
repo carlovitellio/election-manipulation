@@ -6,6 +6,7 @@
 
 namespace ElectionManipulation::GraphCreator{
 
+  //! Automatic registration of the Creators as soon as the dynamic library is loaded
   namespace{
     __attribute__((constructor))
     void registerCreator()
