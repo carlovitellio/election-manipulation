@@ -22,7 +22,7 @@ namespace ElectionManipulation::Distributions{
     return v;
   }
   //! @brief Class for a probability distribution on [0,1]
-  /*! This class enables to read from a .txt file a probability mass function
+  /*! This class enables to read from a .txt file a probability density function
       on [0,1] and to simulate from it.
 
       In order to correctly parse the .txt file it takes advantage of the MuParser
