@@ -132,6 +132,13 @@ namespace ElectionManipulation{
         my_graph[v].manipulator_estim_prob = 0.;
     }
 
+    update_marginal_utility(v);
+
+  }
+
+  void ManipulatorInfluence::update_marginal_utility(Vertex v)
+  {
+    my_graph[v].manipulator_marginal_utility = (1 - my_graph[v].manipulator_estim_prob)/(my_graph[v].resistance + 1);
   }
 
 } // end namespace ElectionManipulation

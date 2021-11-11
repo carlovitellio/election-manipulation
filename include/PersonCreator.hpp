@@ -65,7 +65,6 @@ namespace ElectionManipulation{
     p.name = name;
     std::size_t seed = engine();
     p.engine = std::default_random_engine(seed);
-    p.update_marginal_utility();
   }
 } // end namespace ElectionManipulation
 

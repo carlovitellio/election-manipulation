@@ -6,11 +6,13 @@
 
 namespace ElectionManipulation{
   using EMTraits::RealType;
-
+  using EMTraits::UnsignedType;
   //! Struct to encapsulate the metrics used to evaluate the process' performance
   struct eval_metrics{
     RealType error_estimation_prob{0.}; //!< L2 norm between the real and the estimated probabilities of voting of all the voters in the network
     RealType expected_n_votes{0.};      //!< Expected number of votes
+    UnsignedType tot_sol_person{0};
+
   };
 
   std::ostream& operator<<(std::ostream&, const eval_metrics&);

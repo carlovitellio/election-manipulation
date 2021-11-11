@@ -9,7 +9,8 @@ namespace ElectionManipulation{
   std::ostream& operator<<(std::ostream& os, const eval_metrics& metrics)
   {
     os << metrics.error_estimation_prob << " "
-       << metrics.expected_n_votes << "\n";
+       << metrics.expected_n_votes << " "
+       << metrics.tot_sol_person << "\n";
 
     return os;
   }
@@ -18,14 +19,15 @@ namespace ElectionManipulation{
   void PerformanceEvaluator::compute()
   {
     using vertices_size_type = Graph::vertices_size_type;
-
     my_metrics.expected_n_votes = 0.;
+    my_metrics.tot_sol_person = 0;
     vertices_size_type N{num_vertices(my_graph)};
     std::vector<RealType> real(N), estimated(N);
 
     for(auto v : boost::make_iterator_range(vertices(my_graph)))
     {
       my_metrics.expected_n_votes += my_graph[v].prob_voting_c0;
+      if(my_graph[v].solicited) my_metrics.tot_sol_person++;
       real.push_back(my_graph[v].prob_voting_c0);
       estimated.push_back(my_graph[v].manipulator_estim_prob);
     }

@@ -37,6 +37,7 @@ namespace ElectionManipulation{
     double manipulator_prob_activ{0.};      //!< The manipulator's belief in activation during an information cascade
     double manipulator_utility{0.};         //!< The manipulator's gain in influencing the node
     double manipulator_marginal_utility{0.};//!< The manipulator's expected utility in conditioning other vertices
+    bool solicited{false};
 
     //! Helper function if the stream operator is used to print out the
     //! the social network (contained in <boost/graph/adjacency_list_io.hpp>)
@@ -66,16 +67,6 @@ namespace ElectionManipulation{
         \f]
     */
     void update_prob();
-
-    //! Function used by the manipulator to update her marginal utility
-    //! in conditioning the current node
-    /*! The manipulator marginal utility is determined by the possible
-        shift in probability obtained if the Person accepts her message
-        \f[
-            p_{t+1} - p_t = \frac{1 - p_t}{w+1}
-        \f]
-    */
-    void update_marginal_utility();
 
   };
 

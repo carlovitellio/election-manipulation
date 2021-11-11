@@ -69,17 +69,25 @@ int main(int argc, char** argv)
   //! Class where the Manipulator defines her methods
   ManipulatorInfluence mi(my_graph, steps);
 
+  std::string name = "../out/results_" + gc_ptr->name() + "_v" + std::to_string(num_vertices(my_graph))
+              + "_e" + std::to_string(num_edges(my_graph)) + ".dat";
+
   //! Checks if it is requested to output the performance metrics in a file
   bool output_results = reader.readInfoOutputResults();
+  std::size_t parziale = rounds/20;
+  int j{0};
 
   if(output_results) {
-    std::ofstream file ("../out/results.dat");
-    file << "Round  prob_MSE  expected_votes" << '\n';
+    std::ofstream file (name);
+    file << "Round prob_MSE expected_votes tot_sol" << '\n';
     for(std::size_t i=0; i<=rounds; i++)
     {
       pe.compute();
       file << i << " " << pe.metrics() << '\n';
       mi.influence();
+      if(i%parziale==0){
+        std::clog << j++*5 << "%" << std::endl;
+      }
     }
     file.close();
   } else {

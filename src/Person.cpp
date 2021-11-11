@@ -20,6 +20,7 @@ namespace ElectionManipulation{
 
   bool Person::receive_message()
   {
+    solicited = true;
     bool accepted = cast_a_ballot();
 
     if(accepted) update_prob();
@@ -32,13 +33,6 @@ namespace ElectionManipulation{
   {
     prob_voting_c0 = (prob_voting_c0 * resistance + 1)/(resistance + 1);
     resistance++;
-    update_marginal_utility();
-
-  }
-
-  void Person::update_marginal_utility()
-  {
-    manipulator_marginal_utility = (1 - prob_voting_c0)/(resistance + 1);
   }
 
 } // end of namespace ElectionManipulation

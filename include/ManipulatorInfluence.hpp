@@ -72,6 +72,16 @@ namespace ElectionManipulation{
     */
     void update_estimated_prob(Vertex v, bool accepted);
 
+    //! Function used by the manipulator to update her marginal utility
+    //! in conditioning the current node
+    /*! The manipulator marginal utility is determined by the possible
+        shift in probability obtained if the Person accepts her message
+        \f[
+            p_{t+1} - p_t = \frac{1 - p_t}{w+1}
+        \f]
+    */
+    void update_marginal_utility(Vertex);
+
   private:
     Graph& my_graph;   //!< The actual social network to influence
     std::size_t steps; //!< Only vertices at distance lower or equal to this parameter will be considered for computing the utility of each vertex
