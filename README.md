@@ -17,17 +17,17 @@ For futher details, please read the report.pdf
 * [Boost Graph Library](https://www.boost.org/)
   * Mainly, it was used the template only part of the library. This means that no compilation is needed for most of the code.
   * For implementing the GraphCreatorInputFile class two other libraries were also used. In particular, "boost_graph" and "boost_regex" were used.
-  
+
   For these reasons, it suggested to install the Boost library following [getting_started](https://www.boost.org/doc/libs/1_77_0/more/getting_started/index.html) or look to the section "Installing Boost" below
 * [MuParser](https://beltoforion.de/en/muparser/)
-  
+
   For reading and parsing probability distributions from text file.
   For installing it, follow https://beltoforion.de/en/muparser/building.php
 * [GetPot](http://getpot.sourceforge.net/)
-  
+
   It is actually a single header file and it has already been included in the include/ExternalUtilities folder
 * Some utilities implemented by Prof. Luca Formaggia
-  
+
   Those utilities have been proposed as examples in his APSC classes at Politecnico di Milano and they are available at https://github.com/pacs-course/pacs-examples
 
 It may also be needed to have installed [graphviz](https://graphviz.org/download/).
@@ -44,6 +44,7 @@ After having modified the variables listed above in the Makefile.inc file, it is
 
 ## Executable instructions
 After having made the executable, it may be asked its help via *./main -h*
+In order to run an experiment, it is sufficient to execute the program moving to the src directory and typing *./main*
 
 ## Installing Boost on Unix variants
 This is not intended to replace the [Boost Documentation](https://www.boost.org/doc/libs/1_77_0/more/getting_started/index.html), but it simply tries to help the user.
