@@ -68,9 +68,8 @@ namespace ElectionManipulation{
     std::unique_ptr<VotingDistribution<Generator>> readInfoVotingDist();
 
     //! Read parameters useful for the influence process
-    //! \return A pair containing the number of steps used in the estimation of
-    //!         the utility of each node and the number of influence rounds
-    std::pair<std::size_t, std::size_t> readInfluenceOption();
+    //! \return A pair containing the number of influence rounds and a boolean true if the utility estimation has to be estimated properly
+    std::pair<std::size_t, bool> readInfluenceOption();
 
     //! Check whether the user wants the results (in term of metrics)
     //! printed in a file in the out folder
@@ -207,13 +206,12 @@ namespace ElectionManipulation{
 
 
   template<class Generator>
-  std::pair<std::size_t, std::size_t>
+  std::pair<std::size_t, bool>
   ReadInfoGetPot<Generator>::readInfluenceOption()
   {
-    std::size_t steps  = GPfile("InfluenceOption/Estimation/steps", 1);
     std::size_t rounds = GPfile("InfluenceOption/rounds", 10);
-
-    return std::make_pair(steps, rounds);
+    std::string complete = GPfile("InfluenceOption/Estimation/complete", "1");
+    return std::make_pair(rounds, boost::lexical_cast<bool>(complete));
   }
 
 

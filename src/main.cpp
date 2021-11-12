@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include "ExternalUtilities/GetPot"
 #include "EMUtilities.hpp"
 #include "EMTraits.hpp"
@@ -58,24 +59,24 @@ int main(int argc, char** argv)
   // ------------- ELECTION MANIPULATION -------------
   // -------------------------------------------------
 
-  //! \param steps represents the maximum distance to be used to estimate the
-  //!              utility of a vertex
-  //! \param rounds represents how many times to influence the network
-  auto [steps, rounds] = reader.readInfluenceOption();
+  //! rounds represents how many times to influence the network
+  auto [rounds, complete] = reader.readInfluenceOption();
 
   //! Class where the performance metrics are implemented
   PerformanceEvaluator pe(my_graph);
 
   //! Class where the Manipulator defines her methods
-  ManipulatorInfluence mi(my_graph, steps);
+  ManipulatorInfluence mi(my_graph, complete);
 
   std::string name = "../out/results_" + gc_ptr->name() + "_v" + std::to_string(num_vertices(my_graph))
-              + "_e" + std::to_string(num_edges(my_graph)) + ".dat";
+              + "_e" + std::to_string(num_edges(my_graph)) + "_compl" + std::to_string(complete) + ".dat";
 
   //! Checks if it is requested to output the performance metrics in a file
   bool output_results = reader.readInfoOutputResults();
   std::size_t parziale = rounds/20;
   int j{0};
+
+  auto t1 = std::chrono::steady_clock::now();
 
   if(output_results) {
     std::ofstream file (name);
@@ -97,6 +98,9 @@ int main(int argc, char** argv)
     }
   }
 
+  auto t2 = std::chrono::steady_clock::now();
+
+  std::clog << "Elapsed time for influence: " << std::chrono::duration<double>(t2-t1).count() << std::endl;
   //! Checks if it is requested to output the graph in a file
   if(reader.readInfoPrintGraph()) output_graph(my_graph);
 

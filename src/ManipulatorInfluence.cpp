@@ -8,8 +8,9 @@ namespace ElectionManipulation{
   using Graph = EMTraits::Graph;
   using Vertex = Graph::vertex_descriptor;
 
-  void ManipulatorInfluence::compute_utility(Vertex seed)
+  void ManipulatorInfluence::compute_utility(Vertex seed, std::false_type)
   {
+    std::size_t steps{1};
     using MyQueue = std::queue<std::pair<Vertex, std::size_t>>;
 
     std::unordered_set<Vertex> visited;
@@ -49,6 +50,47 @@ namespace ElectionManipulation{
     my_graph[seed].manipulator_utility = utility;
   }
 
+
+
+  void ManipulatorInfluence::compute_utility(Vertex seed, std::true_type)
+  {
+    using MyQueue = std::queue<Vertex>;
+
+    std::unordered_set<Vertex> visited;
+    visited.emplace(seed);
+    MyQueue vertex_queue;
+    vertex_queue.emplace(seed);
+
+    double utility{my_graph[seed].manipulator_marginal_utility};
+
+    while(!vertex_queue.empty())
+    {
+      auto u = vertex_queue.front();
+      vertex_queue.pop();
+
+      for (auto out : boost::make_iterator_range(out_edges(u, my_graph)))
+      {
+        Vertex v = target(out, my_graph);
+
+        if(visited.find(v) != visited.end())
+        {
+          continue;
+        } else { // The vertex has never been reached before
+          std::bernoulli_distribution d(my_graph[v].manipulator_estim_prob);
+          if(d(engine))
+          {
+            visited.emplace(v);
+            vertex_queue.emplace(v);
+            utility += my_graph[v].manipulator_marginal_utility;
+          }
+        }
+
+      }
+    }
+  //  std::clog << "Node: " << seed << " utility: " << utility << std::endl;
+    my_graph[seed].manipulator_utility = utility;
+  }
+
   Vertex ManipulatorInfluence::max_utility_vertex()
   {
     double max_utility{-1.};
@@ -56,7 +98,11 @@ namespace ElectionManipulation{
     //! For each vertex is computed its utility and saved the maximum
     for(auto i : boost::make_iterator_range(vertices(my_graph)))
     {
-      compute_utility(i);
+      if(complete) {
+        compute_utility(i, std::integral_constant<bool, true>());
+      } else {
+        compute_utility(i, std::integral_constant<bool, false>());
+      }
 
       if(my_graph[i].manipulator_utility > max_utility)
       {

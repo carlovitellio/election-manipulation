@@ -2,6 +2,7 @@
 #define MANIPULATORINFLUENCE_HPP
 
 #include "EMTraits.hpp"
+#include <type_traits>
 
 namespace ElectionManipulation{
 
@@ -32,11 +33,15 @@ namespace ElectionManipulation{
   class ManipulatorInfluence{
 
   public:
+    using DefRandEngine=std::default_random_engine;
     using Graph = EMTraits::Graph;
     using Vertex = Graph::vertex_descriptor;
 
-    ManipulatorInfluence(Graph& my_graph_, std::size_t steps_):
-              my_graph{my_graph_}, steps{steps_} {}
+    ManipulatorInfluence(Graph& my_graph_, bool complete_):
+                  my_graph{my_graph_}, complete{complete_} {
+                    for(auto i : boost::make_iterator_range(vertices(my_graph)))
+                      update_marginal_utility(i);
+                  }
 
     /*!
       This function computes the utility of the seed with respect to the expected max_utility
@@ -45,7 +50,8 @@ namespace ElectionManipulation{
       and their adjacent nodes.
       @param seed The node whose utility has to be computed
     */
-    void compute_utility(Vertex seed);
+    void compute_utility(Vertex seed, std::true_type);
+    void compute_utility(Vertex seed, std::false_type);
 
     /*!
       This function iterates through all nodes of the graph and call the
@@ -84,7 +90,8 @@ namespace ElectionManipulation{
 
   private:
     Graph& my_graph;   //!< The actual social network to influence
-    std::size_t steps; //!< Only vertices at distance lower or equal to this parameter will be considered for computing the utility of each vertex
+    bool complete;     //!< true estimate properly the vertex's utility, false approximate it with just its neighbours
+    mutable DefRandEngine engine;       //!< Source of randomness
   };
 
 } // end namespace ElectionManipulation
