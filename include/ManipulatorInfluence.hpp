@@ -37,8 +37,8 @@ namespace ElectionManipulation{
     using Graph = EMTraits::Graph;
     using Vertex = Graph::vertex_descriptor;
 
-    ManipulatorInfluence(Graph& my_graph_, bool complete_):
-                  my_graph{my_graph_}, complete{complete_} {
+    ManipulatorInfluence(Graph& my_graph_, bool complete_, std::string estim_method_):
+                  my_graph{my_graph_}, complete{complete_}, estim_method{estim_method_} {
                     for(auto i : boost::make_iterator_range(vertices(my_graph)))
                       update_marginal_utility(i);
                   }
@@ -91,7 +91,8 @@ namespace ElectionManipulation{
   private:
     Graph& my_graph;   //!< The actual social network to influence
     bool complete;     //!< true estimate properly the vertex's utility, false approximate it with just its neighbours
-    mutable DefRandEngine engine;       //!< Source of randomness
+    std::string estim_method;       //!< Estimation method used
+    mutable DefRandEngine engine;   //!< Source of randomness
   };
 
 } // end namespace ElectionManipulation

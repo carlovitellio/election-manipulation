@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <boost/graph/adjacency_list_io.hpp>
 #include "ExternalUtilities/GetPot"
 #include "EMUtilities.hpp"
 #include "EMTraits.hpp"
@@ -60,16 +61,23 @@ int main(int argc, char** argv)
   // -------------------------------------------------
 
   //! rounds represents how many times to influence the network
-  auto [rounds, complete] = reader.readInfluenceOption();
+  auto [rounds, complete, estim_method] = reader.readInfluenceOption();
 
   //! Class where the performance metrics are implemented
   PerformanceEvaluator pe(my_graph);
 
   //! Class where the Manipulator defines her methods
-  ManipulatorInfluence mi(my_graph, complete);
+  ManipulatorInfluence mi(my_graph, complete, estim_method);
 
-  std::string name = "../out/results_" + gc_ptr->name() + "_v" + std::to_string(num_vertices(my_graph))
-              + "_e" + std::to_string(num_edges(my_graph)) + "_compl" + std::to_string(complete) + ".dat";
+  auto lambda = reader.InfoOutputFilename();
+
+  std::string name = "../out/results_" + gc_ptr->name() +
+                     "_v" + std::to_string(num_vertices(my_graph)) +
+                     "_e" + std::to_string(num_edges(my_graph)) +
+                     "_compl" + std::to_string(complete) +
+                     "_est" + estim_method +
+                     "_lambda" + std::to_string(int(lambda)) +
+                     ".dat";
 
   //! Checks if it is requested to output the performance metrics in a file
   bool output_results = reader.readInfoOutputResults();
@@ -80,7 +88,7 @@ int main(int argc, char** argv)
 
   if(output_results) {
     std::ofstream file (name);
-    file << "Round prob_MSE expected_votes tot_sol" << '\n';
+    file << "Round prob_MSE expected_votes tot_sol avg_solicited n_estimated_1" << '\n';
     for(std::size_t i=0; i<=rounds; i++)
     {
       pe.compute();
@@ -103,6 +111,12 @@ int main(int argc, char** argv)
   std::clog << "Elapsed time for influence: " << std::chrono::duration<double>(t2-t1).count() << std::endl;
   //! Checks if it is requested to output the graph in a file
   if(reader.readInfoPrintGraph()) output_graph(my_graph);
+/*
+  std::ofstream graph_out("../out/graph.txt");
+  graph_out << boost::write(my_graph);
+  graph_out.close();
+*/
+
 
 
   return 0;

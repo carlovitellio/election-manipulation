@@ -32,11 +32,13 @@ namespace ElectionManipulation{
 
   public:
     // Accessible also to the manipulator
+    std::size_t init_resistance{10};        //!< The initial resistance in changing the probability of voting
     std::size_t resistance{10};             //!< The resistance in changing the probability of voting
     double manipulator_estim_prob{0.5};     //!< The manipulator's estimate of prob_voting_c0
     double manipulator_prob_activ{0.};      //!< The manipulator's belief in activation during an information cascade
     double manipulator_utility{0.};         //!< The manipulator's gain in influencing the node
     double manipulator_marginal_utility{0.};//!< The manipulator's expected utility in conditioning other vertices
+    std::size_t n_solicited{0};
     bool solicited{false};
 
     //! Helper function if the stream operator is used to print out the
@@ -58,6 +60,9 @@ namespace ElectionManipulation{
     //! If accepted, a message changes the prob_voting_c0 and update_prob() is called
     //! \return true if the message has been accepted, false otherwise
     bool receive_message();
+
+    //! The Person has been chosen as seed and so accepts the message
+    void node_bought();
 
     //! The Person has been influenced and changes her probability of voting accordingly
     /*! In particular, her probability of voting the candidate c0 increases
@@ -86,8 +91,10 @@ namespace ElectionManipulation{
     if(with_prop)
     {
       dp.property("Probability_voting",    get(&Person::prob_voting_c0, g));
+      dp.property("Init_Resistance",       get(&Person::init_resistance, g));
       dp.property("Resistance",            get(&Person::resistance, g));
       dp.property("Estimated_probability", get(&Person::manipulator_estim_prob, g));
+      dp.property("n_solicited",           get(&Person::n_solicited, g));
     }
 
     return dp;

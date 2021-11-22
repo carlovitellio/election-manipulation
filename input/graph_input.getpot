@@ -7,7 +7,7 @@ output_results = 1
 
 [Graph_option]
 library = '../lib/libBoostCreators.so ../lib/libInputCreator.so'
-graph_type = R-MAT
+graph_type = Small-World
 # Input file where it is stored the graph to manipulate if graph_type is equal to "Input-file"
 Input_graph = ../input/test_w_property.dot
 
@@ -34,7 +34,7 @@ c = 0.27
 d = 0.11
 
 [Graph_option/PLOD]
-alpha = 0.62
+alpha = 0.93
 beta = 1000
 
 [Person_option/Resistance]
@@ -42,7 +42,7 @@ distribution = Poisson
 filename = ../input/resistanceDistrib.txt
 
 [Person_option/Resistance/poisson]
-lambda = 50
+lambda = 1000
 
 [Person_option/ProbabilityVoting]
 distribution = Beta
@@ -53,8 +53,9 @@ alpha = 1
 beta = 6
 
 [InfluenceOption]
-rounds = 1000
+rounds = 10000
 
 [InfluenceOption/Estimation]
 # 1 to estimate properly the vertex's utility, 0 to approximate it with just its neighbours
-complete = 0
+complete = 1
+estim_method = Power

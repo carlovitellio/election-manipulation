@@ -2,6 +2,7 @@
 #include <unordered_set>
 #include <queue>
 #include <utility>
+#include <cmath>
 #include "Person.hpp"
 
 namespace ElectionManipulation{
@@ -87,7 +88,6 @@ namespace ElectionManipulation{
 
       }
     }
-  //  std::clog << "Node: " << seed << " utility: " << utility << std::endl;
     my_graph[seed].manipulator_utility = utility;
   }
 
@@ -121,7 +121,7 @@ namespace ElectionManipulation{
     Vertex seed = max_utility_vertex();
     //! Since it is taken as seed, she is assumed to accept the message and
     //! to update her probability of voting
-    my_graph[seed].update_prob();
+    my_graph[seed].node_bought();
     update_estimated_prob(seed, true);
 
     std::unordered_set<Vertex> visited;
@@ -163,23 +163,21 @@ namespace ElectionManipulation{
 
   void ManipulatorInfluence::update_estimated_prob(Vertex v, bool accepted)
   {
-    if(accepted)
-    {
-      my_graph[v].manipulator_estim_prob =
-            (my_graph[v].manipulator_estim_prob * my_graph[v].resistance + 2.)\
-                                    /(my_graph[v].resistance + 1.);
-      if(my_graph[v].manipulator_estim_prob > 1.)
-        my_graph[v].manipulator_estim_prob = 1.;
-    } else {
-      my_graph[v].manipulator_estim_prob =
-            (my_graph[v].manipulator_estim_prob * my_graph[v].resistance - 1.)\
-                                  /(my_graph[v].resistance + 1.);
-      if(my_graph[v].manipulator_estim_prob < 0.)
-        my_graph[v].manipulator_estim_prob = 0.;
+    double& p = my_graph[v].manipulator_estim_prob;
+    std::size_t& resist_0 = my_graph[v].init_resistance;
+    std::size_t& n_solic = my_graph[v].n_solicited;
+    if(estim_method == "Standard")
+      p = (p *(n_solic + 1.) + int(accepted)*(1. + resist_0/n_solic))/
+              (n_solic + 1. + int(accepted)*(1.) + resist_0/n_solic);
+    else if (estim_method == "Power")
+      p = (p *(n_solic + 1.) + int(accepted)*(1. + pow(resist_0, 1.3)/n_solic))/
+              (n_solic + 1. + int(accepted)*(1.) + pow(resist_0, 1.3)/n_solic);
+    else {
+      std::cerr << "No estimation method called" << estim_method;
+      std::exit(1);
     }
 
     update_marginal_utility(v);
-
   }
 
   void ManipulatorInfluence::update_marginal_utility(Vertex v)

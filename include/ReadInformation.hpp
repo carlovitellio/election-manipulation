@@ -10,6 +10,7 @@
 #include <dlfcn.h>
 #include <filesystem>
 #include <utility>
+#include <tuple>
 #include <boost/lexical_cast.hpp>
 
 namespace ElectionManipulation{
@@ -69,7 +70,7 @@ namespace ElectionManipulation{
 
     //! Read parameters useful for the influence process
     //! \return A pair containing the number of influence rounds and a boolean true if the utility estimation has to be estimated properly
-    std::pair<std::size_t, bool> readInfluenceOption();
+    auto readInfluenceOption();
 
     //! Check whether the user wants the results (in term of metrics)
     //! printed in a file in the out folder
@@ -77,6 +78,9 @@ namespace ElectionManipulation{
 
     //! Check whether the user wants the graph printed in a file in the out folder
     bool readInfoPrintGraph();
+
+    //! Info useful to decide the output filename 
+    auto InfoOutputFilename();
   };
 
 
@@ -206,12 +210,12 @@ namespace ElectionManipulation{
 
 
   template<class Generator>
-  std::pair<std::size_t, bool>
-  ReadInfoGetPot<Generator>::readInfluenceOption()
+  auto ReadInfoGetPot<Generator>::readInfluenceOption()
   {
     std::size_t rounds = GPfile("InfluenceOption/rounds", 10);
     std::string complete = GPfile("InfluenceOption/Estimation/complete", "1");
-    return std::make_pair(rounds, boost::lexical_cast<bool>(complete));
+    std::string estim_method = GPfile("InfluenceOption/Estimation/estim_method", "Standard");
+    return std::make_tuple(rounds, boost::lexical_cast<bool>(complete), estim_method);
   }
 
 
@@ -226,6 +230,12 @@ namespace ElectionManipulation{
   bool ReadInfoGetPot<Generator>::readInfoPrintGraph(){
     std::string print_graph = GPfile("Output/print_graph", "1");
     return boost::lexical_cast<bool>(print_graph);
+  }
+
+  template<class Generator>
+  auto ReadInfoGetPot<Generator>::InfoOutputFilename(){
+    double lambda = GPfile("Person_option/Resistance/poisson/lambda", 50.);
+    return lambda;
   }
 
 } // end namespace ElectionManipulation

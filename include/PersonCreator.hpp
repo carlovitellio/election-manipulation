@@ -60,7 +60,8 @@ namespace ElectionManipulation{
   template<class Generator>
   void PersonCreator<Generator>::apply(Person& p)
   {
-    p.resistance = dis_res->extract();
+    p.init_resistance = dis_res->extract();
+    p.resistance = p.init_resistance;
     p.prob_voting_c0 = dis_prob->extract();
     p.name = name;
     std::size_t seed = engine();

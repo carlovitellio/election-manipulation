@@ -4,9 +4,10 @@ namespace ElectionManipulation{
 
   std::ostream & operator << (std::ostream & str, Person const & p)
   {
-    str << "Name: " << p.name << ", "
-        << "Resistance: " << p.resistance << ", "
-        << "Probability_voting: " << p.prob_voting_c0 << ".\n";
+    str << "Resistance: " << p.resistance << ", "
+        << "n_solicited: " << p.n_solicited << ", "
+        << "Probability_voting: " << p.prob_voting_c0 << ", "
+        << "estimated: " << p.manipulator_estim_prob << ".\n";
 
     return str;
   }
@@ -20,13 +21,20 @@ namespace ElectionManipulation{
 
   bool Person::receive_message()
   {
+    n_solicited++;
     solicited = true;
     bool accepted = cast_a_ballot();
 
     if(accepted) update_prob();
 
     return accepted;
+  }
 
+  void Person::node_bought()
+  {
+    n_solicited++;
+    solicited = true;
+    update_prob();
   }
 
   void Person::update_prob()
