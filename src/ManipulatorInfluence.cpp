@@ -11,46 +11,14 @@ namespace ElectionManipulation{
 
   void ManipulatorInfluence::compute_utility(Vertex seed, std::false_type)
   {
-    std::size_t steps{1};
-    using MyQueue = std::queue<std::pair<Vertex, std::size_t>>;
-
-    std::unordered_set<Vertex> visited;
-    visited.emplace(seed);
-    MyQueue vertex_queue;
-    vertex_queue.emplace(std::make_pair(seed, steps));
-
     double utility{my_graph[seed].manipulator_marginal_utility};
-    //! If the node is picked as seed node for the cascade, it is assumed it will activate
-    my_graph[seed].manipulator_prob_activ = 1.;
-
-    while(!vertex_queue.empty())
+    for (auto out : boost::make_iterator_range(out_edges(seed, my_graph)))
     {
-      auto [u, step] = vertex_queue.front();
-      vertex_queue.pop();
-
-      if(step == 0) continue;
-
-      for (auto out : boost::make_iterator_range(out_edges(u, my_graph)))
-      {
-        Vertex v = target(out, my_graph);
-
-        if(visited.find(v) != visited.end())
-        {
-          continue;
-        } else { // The vertex has never been reached before
-          visited.emplace(v);
-          vertex_queue.emplace(std::make_pair(v, step-1));
-          my_graph[v].manipulator_prob_activ = my_graph[u].manipulator_prob_activ \
-                                              * my_graph[v].manipulator_estim_prob;
-
-          utility += my_graph[v].manipulator_prob_activ * my_graph[v].manipulator_marginal_utility;
-        }
-
-      }
+      Vertex v = target(out, my_graph);
+      utility += my_graph[v].manipulator_estim_prob * my_graph[v].manipulator_marginal_utility;
     }
     my_graph[seed].manipulator_utility = utility;
   }
-
 
 
   void ManipulatorInfluence::compute_utility(Vertex seed, std::true_type)
@@ -60,9 +28,14 @@ namespace ElectionManipulation{
     std::unordered_set<Vertex> visited;
     visited.emplace(seed);
     MyQueue vertex_queue;
-    vertex_queue.emplace(seed);
 
     double utility{my_graph[seed].manipulator_marginal_utility};
+
+    for (auto out : boost::make_iterator_range(out_edges(seed, my_graph)))
+    {
+      Vertex v = target(out, my_graph);
+      vertex_queue.emplace(v);
+    }
 
     while(!vertex_queue.empty())
     {
@@ -166,14 +139,23 @@ namespace ElectionManipulation{
     double& p = my_graph[v].manipulator_estim_prob;
     std::size_t& resist_0 = my_graph[v].init_resistance;
     std::size_t& n_solic = my_graph[v].n_solicited;
-    if(estim_method == "Standard")
-      p = (p *(n_solic + 1.) + int(accepted)*(1. + resist_0/n_solic))/
-              (n_solic + 1. + int(accepted)*(1.) + resist_0/n_solic);
+
+    if(estim_method == "Beta_update")
+      p = (p * n_solic + int(accepted)*(1. + 1./n_solic))/
+              (n_solic + int(accepted)*(1.) + 1./n_solic);
+//    else if(estim_method == "Standard")
+//      p = (p *(n_solic + 1.) + int(accepted)*(1. + resist_0/n_solic))/
+//              (n_solic + 1. + int(accepted)*(1.) + resist_0/n_solic);
+    else if(estim_method == "Standard")
+      p = (p *n_solic + int(accepted)*(1. + resist_0/n_solic))/
+              (n_solic + int(accepted)*(1.) + resist_0/n_solic);
     else if (estim_method == "Power")
-      p = (p *(n_solic + 1.) + int(accepted)*(1. + pow(resist_0, 1.3)/n_solic))/
-              (n_solic + 1. + int(accepted)*(1.) + pow(resist_0, 1.3)/n_solic);
+//      p = (p *(n_solic + 1.) + int(accepted)*(1. + pow(resist_0, 1.3)/n_solic))/
+//              (n_solic + 1. + int(accepted)*(1.) + pow(resist_0, 1.3)/n_solic);
+      p = (p *n_solic + int(accepted)*(1. + pow(resist_0, 1.3)/n_solic))/
+              (n_solic + int(accepted)*(1.) + pow(resist_0, 1.3)/n_solic);
     else {
-      std::cerr << "No estimation method called" << estim_method;
+      std::cerr << "No estimation method called" << estim_method << std::endl;
       std::exit(1);
     }
 

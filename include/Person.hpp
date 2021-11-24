@@ -35,7 +35,6 @@ namespace ElectionManipulation{
     std::size_t init_resistance{10};        //!< The initial resistance in changing the probability of voting
     std::size_t resistance{10};             //!< The resistance in changing the probability of voting
     double manipulator_estim_prob{0.5};     //!< The manipulator's estimate of prob_voting_c0
-    double manipulator_prob_activ{0.};      //!< The manipulator's belief in activation during an information cascade
     double manipulator_utility{0.};         //!< The manipulator's gain in influencing the node
     double manipulator_marginal_utility{0.};//!< The manipulator's expected utility in conditioning other vertices
     std::size_t n_solicited{0};
